@@ -54,94 +54,71 @@ namespace OptimizationMethods.ZerothOrder
             }
             y[0] = startPoint;
 
-            double[][] x = new double[param.Dimension + 100][];
-            for (int index = 0; index < param.Dimension + 100; index++)
-            {
-                x[index] = new double[param.Dimension + 100];
-            }
-            x[0] = startPoint;
-
-            int i = 0;
-            int k = 0;
+            double[] basis = startPoint;
 
             while (true)
             {
                 //Шаг 2. Осуществить исследующий поиск по выбранному координатному направлению (i)
-                if (func(GetPositiveProbe(y, i)) < func(y[i]))
+                for (int i = 0; i < param.Dimension; i++)
                 {
-                    // шаг считается удачным
-                    y[i + 1] = GetPositiveProbe(y, i);
-                    // перейти к шагу 3;
-                }
-                else
-                {
-                    // шаг неудачен, делаем шаг в противоположном направлении
-                    if (func(GetNegativeProbe(y, i)) < func(y[i]))
+                    if (func(GetPositiveProbe(y, i)) < func(y[i]))
                     {
                         // шаг считается удачным
-                        y[i + 1] = GetNegativeProbe(y, i);
-                        // перейти к шагу 3;
+                        y[i + 1] = GetPositiveProbe(y, i);
                     }
                     else
                     {
-                        // оба шага неудачны
-                        y[i + 1] = y[i];
+                        // шаг неудачен, делаем шаг в противоположном направлении
+                        if (func(GetNegativeProbe(y, i)) < func(y[i]))
+                        {
+                            // шаг в противоположном направлении считается удачным
+                            y[i + 1] = GetNegativeProbe(y, i);
+                        }
+                        else
+                        {
+                            // оба шага неудачны
+                            y[i + 1] = y[i];
+                        }
                     }
                 }
-
-                // Шаг 3. Проверить условия:
-                if (i < param.Dimension - 1)
+                // Проверить успешность исследующего поиска:
+                if (func(y[param.Dimension]) < func(basis))
                 {
-                    i++;
-                    // перейти к шагу 2 (продолжить исследующий поиск по оставшимся направлениям);
+                    // перейти к шагу 4;
+
+                    // Шаг 4. Провести поиск по образцу. Положить xk+l = yn+l,
+                    basis = y[param.Dimension];
+                    // y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k]);
+                    y[0] = PatternSearch(basis);
+                    // перейти к шагу 2.
                     continue;
                 }
                 else
                 {
-                    // если i == n, проверить успешность исследующего поиска:
-                    if (func(y[param.Dimension]) < func(x[k]))
-                    {
-                        // перейти к шагу 4;
+                    // перейти к шагу 5.
 
-                        // Шаг 4. Провести поиск по образцу. Положить xk+l = yn+l,
-                        x[k + 1] = y[param.Dimension];
-                        // y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k]);
-                        y[0] = PoiskPoObrazcu(x, k);
-                        i = 0;
-                        k++;
+                    // Шаг 5. Проверить условие окончания:
+                    if (!AllStepsLessPrecision(precision))
+                    {
+                        for (int index = 0; index < param.Dimension; index++)
+                        {
+                            // Для значений шагов, больших точности
+                            if (param.Step[index] > precision)
+                            {
+                                // Уменьшить величину шага
+                                param.Step[index] /= param.CoefficientReduction;
+                            }
+                        }
+
+                        y[0] = basis;
                         // перейти к шагу 2.
                         continue;
                     }
                     else
                     {
-                        // перейти к шагу 5.
-
-                        // Шаг 5. Проверить условие окончания:
-                        if (!AllStepsLessPrecision(precision))
-                        {
-                            for (int index = 0; index < param.Dimension; index++)
-                            {
-                                // Для значений шагов, больших точности
-                                if (param.Step[index] > precision)
-                                {
-                                    // Уменьшить величину шага
-                                    param.Step[index] /= param.CoefficientReduction;
-                                }
-                            }
-
-                            y[0] = x[k];
-                            x[k + 1] = x[k];
-                            k++;
-                            i = 0;
-                            // перейти к шагу 2.
-                            continue;
-                        }
-                        else
-                        {
-                            // Значение всех шагов меньше точности
-                            // Поиск закончен
-                            return x[k];
-                        }
+                        // Значение всех шагов меньше точности
+                        // Поиск закончен
+                        return basis;
                     }
                 }
             }
@@ -173,12 +150,12 @@ namespace OptimizationMethods.ZerothOrder
             return solution;
         }
 
-        private double[] PoiskPoObrazcu(double[][] x, int k)
+        private double[] PatternSearch(double[] basis)
         {
             double[] solution = new double[param.Dimension];
             for (int index = 0; index < param.Dimension; index++)
             {
-                solution[index] = x[k + 1][index] + param.AccelerateCoefficient * (x[k + 1][index] - x[k][index]);
+                solution[index] = basis[index] + param.AccelerateCoefficient * (basis[index] - basis[index]);
             }
 
             return solution;

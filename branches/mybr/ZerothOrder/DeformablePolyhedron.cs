@@ -7,6 +7,8 @@
 
 namespace OptimizationMethods.ZerothOrder
 {
+    using System.Diagnostics;
+
     /// <summary>
     /// Ссылка на функциональную зависимость f(x1,х2,...,хn).
     /// </summary>
@@ -34,65 +36,100 @@ namespace OptimizationMethods.ZerothOrder
     /// ------------------------------------------------------------------------------------------------
     public class DeformablePolyhedron
     {
+        #region Public Fields
+
+        #endregion
+
+        #region Private Fields
+        /// <summary>
+        /// Параметры метода.
+        /// </summary>
+        private readonly MethodParams param;
+
+        /// <summary>
+        /// Минимизируемая функция.
+        /// </summary>
+        private readonly ManyVariable func;
+        #endregion
+
+        #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeformablePolyhedron"/> class.
+        /// </summary>
+        /// <param name="inputFunc">The input func.</param>
+        /// <param name="inputParams">The input params.</param>
+        public DeformablePolyhedron(ManyVariable inputFunc, MethodParams inputParams)
+        {
+            Debug.Assert(inputParams.Alfa > 0, "Alfa coefficient is unexepectedly less or equal zero");
+            Debug.Assert(inputParams.Beta > 0, "Alfa coefficient is unexepectedly less or equal zero");
+            Debug.Assert(inputParams.Gamma > 0, "Alfa coefficient is unexepectedly less or equal zero");
+            Debug.Assert(inputParams.Dimension > 1, "Dimension is unexepectedly less or equal 1");
+            this.param = inputParams;
+
+            Debug.Assert(inputFunc != null, "Input function reference is unexepectedly null");
+            this.func = inputFunc;
+        }
+        #endregion
+
+        #region Properties
+
+        #endregion
+
+        #region Public Methods
         /// <summary>
         /// Нахождение безусловного минимума функции многих переменных.
         /// </summary>
-        /// <param name="searchFunc">Ссылка на минимизируемую функцию.</param>
-        /// <param name="funcParam">Параметры поиска.</param>
-        /// <returns>Вектор значений х, при котором функция достигает минимума.</returns>
-        public double[] GetMinimum(ManyVariable searchFunc, MethodParams funcParam)
+        /// <param name="startingPoint">The starting point.</param>
+        /// <param name="precision">The precision.</param>
+        /// <returns>
+        /// Вектор значений х, при котором функция достигает минимума.
+        /// </returns>
+        public double[] GetMinimum(double[] startingPoint, double precision)
         {
-            Polyhedron workPolyhedron = new Polyhedron(funcParam);
+            Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
 
-            bool isStop = false;
-            while (!isStop)
+            Polyhedron polyhedron = new Polyhedron(this.func, this.param, startingPoint);
+
+            while (polyhedron.GetSigma() > precision)
             {
-                workPolyhedron.VertexSorting(searchFunc);
-
-                workPolyhedron.CalculateCenterOfGravity();
-
-                if (workPolyhedron.GetSigma(searchFunc) <= funcParam.Precision)
+                if (this.func(polyhedron.MirrorVertex.X) <= this.func(polyhedron.BestVertex.X))
                 {
-                    isStop = true;
-                    return workPolyhedron.BestVertex.ToDouble();
-                }
-
-                if (searchFunc(workPolyhedron.MirrorVertex.X) <= searchFunc(workPolyhedron.BestVertex.X))
-                {
-                    if (searchFunc(workPolyhedron.ExtensionVertex.X) < searchFunc(workPolyhedron.BestVertex.X))
+                    if (this.func(polyhedron.ExtensionVertex.X) < this.func(polyhedron.BestVertex.X))
                     {
-                        workPolyhedron.WorstVertex = workPolyhedron.ExtensionVertex;
-                        continue;
+                        // выполним растяжение
+                        polyhedron.WorstVertex = polyhedron.ExtensionVertex;
                     }
                     else
                     {
-                        workPolyhedron.WorstVertex = workPolyhedron.MirrorVertex;
-                        continue;
+                        // выполним отражение
+                        polyhedron.WorstVertex = polyhedron.MirrorVertex;
                     }
                 }
-
-                if (searchFunc(workPolyhedron.SecondBestVertex.X) < searchFunc(workPolyhedron.MirrorVertex.X) && searchFunc(workPolyhedron.MirrorVertex.X) <= searchFunc(workPolyhedron.WorstVertex.X))
+                else if (this.func(polyhedron.SecondBestVertex.X) < this.func(polyhedron.MirrorVertex.X) && this.func(polyhedron.MirrorVertex.X) <= this.func(polyhedron.WorstVertex.X))
                 {
-                    workPolyhedron.WorstVertex = workPolyhedron.CompressionVertex;
-                    continue;
+                    // выполним сжатие
+                    polyhedron.WorstVertex = polyhedron.CompressionVertex;
                 }
-
-                if (searchFunc(workPolyhedron.BestVertex.X) < searchFunc(workPolyhedron.MirrorVertex.X) && searchFunc(workPolyhedron.MirrorVertex.X) <= searchFunc(workPolyhedron.SecondBestVertex.X))
+                else if (this.func(polyhedron.BestVertex.X) < this.func(polyhedron.MirrorVertex.X) && this.func(polyhedron.MirrorVertex.X) <= this.func(polyhedron.SecondBestVertex.X))
                 {
-                    workPolyhedron.WorstVertex = workPolyhedron.MirrorVertex;
-                    continue;
+                    polyhedron.WorstVertex = polyhedron.MirrorVertex;
                 }
-
-                if (searchFunc(workPolyhedron.MirrorVertex.X) > searchFunc(workPolyhedron.BestVertex.X))
+                else if (this.func(polyhedron.MirrorVertex.X) > this.func(polyhedron.BestVertex.X))
                 {
-                    workPolyhedron.ReductionOperation();
-                    continue;
+                    // выполним редукцию
+                    polyhedron.ReductionOperation();
                 }
             }
 
-            return workPolyhedron.BestVertex.ToDouble();
+            return polyhedron.BestVertex.ToDouble();
         }
+        #endregion
 
+        #region Private Methods
+
+        #endregion
+
+        #region Structs
         /// <summary>
         /// Передаваемые в метод параметры.
         /// </summary>
@@ -114,25 +151,15 @@ namespace OptimizationMethods.ZerothOrder
             public double Gamma;
 
             /// <summary>
-            /// Число для остановки алгоритма.
-            /// </summary>
-            public double Precision;
-
-            /// <summary>
             /// Количество переменных в минимизируемом уравнении.
             /// </summary>
-            public int FuncDimension;
-
-            /// <summary>
-            /// Вершины начального многогранника.
-            /// </summary>
-            public Point[] StartPoint;
+            public int Dimension;
         }
 
         /// <summary>
         /// Точка (вершина) многогранника.
         /// </summary>
-        public struct Point
+        internal struct Point
         {
             #region Private Member Variables
             /// <summary>
@@ -263,12 +290,17 @@ namespace OptimizationMethods.ZerothOrder
                 return sb.ToString();
             }
 
+            /// <summary>
+            /// Toes the double.
+            /// </summary>
+            /// <returns> A <see cref="System.Double"/> that represents this instance.</returns>
             public double[] ToDouble()
             {
                 return this.x;
             }
             #endregion
         }
+        #endregion
 
         /// <summary>
         /// Абстракция многогранника.
@@ -277,24 +309,19 @@ namespace OptimizationMethods.ZerothOrder
         {
             #region Private Member Variables
             /// <summary>
-            /// Коэфициент отражения.
+            /// Параметры метода.
             /// </summary>
-            private readonly double alfa;
+            private readonly MethodParams param;
 
             /// <summary>
-            /// Коэфициент сжатия.
+            /// Значение ребра, на ктр будут смещены вершины начального многогранника относительно начальной точки.
             /// </summary>
-            private readonly double beta;
+            private const int InitEdgeValue = 1; // magic number
 
             /// <summary>
-            /// Коэфициент сжатия.
+            /// Минимизируемая функция.
             /// </summary>
-            private readonly double gama;
-
-            /// <summary>
-            /// Количество вершин многогранника.
-            /// </summary>
-            private readonly int dimension;
+            private readonly ManyVariable func;
 
             /// <summary>
             /// Множество вершин многогранника.
@@ -311,14 +338,21 @@ namespace OptimizationMethods.ZerothOrder
             /// <summary>
             /// Initializes a new instance of the <see cref="Polyhedron"/> class.
             /// </summary>
-            /// <param name="initParam">The initial param.</param>
-            public Polyhedron(MethodParams initParam)
+            /// <param name="inputFunc">The input func.</param>
+            /// <param name="inputParams">The input params.</param>
+            /// <param name="startingPoint">The starting point.</param>
+            public Polyhedron(ManyVariable inputFunc, MethodParams inputParams, double[] startingPoint)
             {
-                this.alfa = initParam.Alfa;
-                this.beta = initParam.Beta;
-                this.gama = initParam.Gamma;
-                this.dimension = initParam.FuncDimension + 1;
-                this.vertex = initParam.StartPoint;
+                Debug.Assert(inputParams.Alfa > 0, "Alfa coefficient is unexepectedly less or equal zero");
+                Debug.Assert(inputParams.Beta > 0, "Alfa coefficient is unexepectedly less or equal zero");
+                Debug.Assert(inputParams.Gamma > 0, "Alfa coefficient is unexepectedly less or equal zero");
+                Debug.Assert(inputParams.Dimension > 1, "Dimension is unexepectedly less or equal 1");
+                this.param = inputParams;
+
+                Debug.Assert(inputFunc != null, "Input function reference is unexepectedly null");
+                this.func = inputFunc;
+
+                this.vertex = this.GetStartingVertex(startingPoint);
             }
             #endregion
 
@@ -329,8 +363,8 @@ namespace OptimizationMethods.ZerothOrder
             /// <value>The worst vertex.</value>
             internal Point WorstVertex
             {
-                get { return this.vertex[this.dimension - 1]; }
-                set { this.vertex[this.dimension - 1] = value; }
+                get { return this.vertex[this.param.Dimension]; }
+                set { this.vertex[this.param.Dimension] = value; }
             }
 
             /// <summary>
@@ -357,7 +391,7 @@ namespace OptimizationMethods.ZerothOrder
             /// <value>The mirror vertex.</value>
             internal Point MirrorVertex
             {
-                get { return this.centerOfGravity + (this.alfa * (this.centerOfGravity - this.WorstVertex)); }
+                get { return this.centerOfGravity + (this.param.Alfa * (this.centerOfGravity - this.WorstVertex)); }
             }
 
             /// <summary>
@@ -366,7 +400,7 @@ namespace OptimizationMethods.ZerothOrder
             /// <value>The extension vertex.</value>
             internal Point ExtensionVertex
             {
-                get { return this.centerOfGravity + (this.gama * (this.MirrorVertex - this.centerOfGravity)); }
+                get { return this.centerOfGravity + (this.param.Gamma * (this.MirrorVertex - this.centerOfGravity)); }
             }
 
             /// <summary>
@@ -375,45 +409,30 @@ namespace OptimizationMethods.ZerothOrder
             /// <value>The compression vertex.</value>
             internal Point CompressionVertex
             {
-                get { return this.centerOfGravity + (this.beta * (this.WorstVertex - this.centerOfGravity)); }
+                get { return this.centerOfGravity + (this.param.Beta * (this.WorstVertex - this.centerOfGravity)); }
             }
             #endregion
 
             #region Public Methods
             /// <summary>
-            /// Вычислить центр тяжести.
-            /// </summary>
-            internal void CalculateCenterOfGravity()
-            {
-                Point tmpval = new Point(this.dimension - 1);
-
-                for (int i = 0; i < this.dimension - 1; i++)
-                {
-                    tmpval += this.vertex[i];
-                }
-
-                tmpval /= this.dimension - 1;
-                this.centerOfGravity = tmpval;
-            }
-
-            /// <summary>
             /// Получить отличие значения функции в вершинах текущего многогранника от значений функции в центре тяжести.
             /// </summary>
-            /// <param name="funcSgm">Ссылка на функцию многих переменных.</param>
             /// <returns>Значение сигмы.</returns>
-            internal double GetSigma(ManyVariable funcSgm)
+            internal double GetSigma()
             {
-                double tmpSigma = 0;
-                double valueFuncInCentr = funcSgm(this.centerOfGravity.X);
+                this.VertexSorting();
+                this.CalculateCenterOfGravity();
 
-                for (int i = 0; i < this.dimension; i++)
+                double valueFuncInCentr = this.func(this.centerOfGravity.X);
+                double sumAllVertex = 0;
+                for (int i = 0; i < this.param.Dimension + 1; i++)
                 {
-                    tmpSigma += (funcSgm(this.vertex[i].X) - valueFuncInCentr) * (funcSgm(this.vertex[i].X) - valueFuncInCentr);
+                    sumAllVertex += (this.func(this.vertex[i].X) - valueFuncInCentr) * (this.func(this.vertex[i].X) - valueFuncInCentr);
                 }
 
-                tmpSigma /= this.dimension;
+                sumAllVertex /= this.param.Dimension + 1;
 
-                return System.Math.Sqrt(tmpSigma);
+                return System.Math.Sqrt(sumAllVertex);
             }
 
             /// <summary>
@@ -421,36 +440,82 @@ namespace OptimizationMethods.ZerothOrder
             /// </summary>
             internal void ReductionOperation()
             {
-                for (int i = 0; i < this.dimension; i++)
+                for (int i = 0; i < this.param.Dimension + 1; i++)
                 {
                     this.vertex[i] = this.BestVertex + (0.5 * (this.vertex[i] - this.BestVertex));
                 }
             }
 
+            #endregion
+
+            #region Private Methods
             /// <summary>
             /// Сортировка вершин по близости к минимуму.
             /// </summary>
-            /// <param name="mvf">Ссылка на функцию многих переменных.</param>
-            internal void VertexSorting(ManyVariable mvf)
+            private void VertexSorting()
             {
-                double[] functionValue = new double[this.dimension];
-                int[] vertexNumber = new int[this.dimension];
+                double[] functionValue = new double[this.param.Dimension + 1];
+                int[] vertexNumber = new int[this.param.Dimension + 1];
 
-                for (int i = 0; i < this.dimension; i++)
+                for (int i = 0; i < this.param.Dimension + 1; i++)
                 {
                     vertexNumber[i] = i;
-                    functionValue[i] = mvf(this.vertex[i].X);
+                    functionValue[i] = this.func(this.vertex[i].X);
                 }
 
                 System.Array.Sort(functionValue, vertexNumber);
 
-                Point[] sortPoints = new Point[this.dimension];
-                for (int i = 0; i < this.dimension; i++)
+                Point[] sortPoints = new Point[this.param.Dimension + 1];
+                for (int i = 0; i < this.param.Dimension + 1; i++)
                 {
                     sortPoints[i] = this.vertex[vertexNumber[i]];
                 }
 
                 this.vertex = sortPoints;
+            }
+
+            /// <summary>
+            /// Вычислить центр тяжести.
+            /// </summary>
+            private void CalculateCenterOfGravity()
+            {
+                Point tmpval = new Point(this.param.Dimension);
+
+                for (int i = 0; i < this.param.Dimension; i++)
+                {
+                    tmpval += this.vertex[i];
+                }
+
+                tmpval /= this.param.Dimension;
+                this.centerOfGravity = tmpval;
+            }
+
+            /// <summary>
+            /// Gets the starting vertex.
+            /// </summary>
+            /// <param name="startingPoint">The starting point.</param>
+            /// <returns>Значения вершин начального многогранника.</returns>
+            private Point[] GetStartingVertex(double[] startingPoint)
+            {
+                Point[] startingVertex = new Point[this.param.Dimension + 1];
+                startingVertex[0] = new Point(this.param.Dimension);
+                for (int i = 0; i < this.param.Dimension; i++)
+                {
+                    startingVertex[0].X[i] = startingPoint[i];
+                }
+
+                for (int i = 1; i < this.param.Dimension + 1; i++)
+                {
+                    startingVertex[i] = new Point(this.param.Dimension);
+                    for (int j = 0; j < this.param.Dimension; j++)
+                    {
+                        startingVertex[0].X[j] = startingPoint[j];
+                    }
+
+                    startingVertex[i].X[i - 1] += InitEdgeValue;
+                }
+
+                return startingVertex;
             }
             #endregion
         }

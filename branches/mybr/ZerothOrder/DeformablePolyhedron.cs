@@ -32,7 +32,7 @@ namespace OptimizationMethods.ZerothOrder
     /// в вершинах текущего многогранника отличаются от значения функции в центре
     /// тяжести системы xi(k), i = 1,... ,n +1; i!=h не более чем на е &gt; 0.
     /// ------------------------------------------------------------------------------------------------
-    public static class DeformablePolyhedron
+    public class DeformablePolyhedron
     {
         /// <summary>
         /// Нахождение безусловного минимума функции многих переменных.
@@ -40,7 +40,7 @@ namespace OptimizationMethods.ZerothOrder
         /// <param name="searchFunc">Ссылка на минимизируемую функцию.</param>
         /// <param name="funcParam">Параметры поиска.</param>
         /// <returns>Вектор значений х, при котором функция достигает минимума.</returns>
-        public static Point GetMinimum(ManyVariable searchFunc, MethodParams funcParam)
+        public double[] GetMinimum(ManyVariable searchFunc, MethodParams funcParam)
         {
             Polyhedron workPolyhedron = new Polyhedron(funcParam);
 
@@ -54,7 +54,7 @@ namespace OptimizationMethods.ZerothOrder
                 if (workPolyhedron.GetSigma(searchFunc) <= funcParam.Precision)
                 {
                     isStop = true;
-                    return workPolyhedron.BestVertex;
+                    return workPolyhedron.BestVertex.ToDouble();
                 }
 
                 if (searchFunc(workPolyhedron.MirrorVertex.X) <= searchFunc(workPolyhedron.BestVertex.X))
@@ -90,7 +90,7 @@ namespace OptimizationMethods.ZerothOrder
                 }
             }
 
-            return workPolyhedron.BestVertex;
+            return workPolyhedron.BestVertex.ToDouble();
         }
 
         /// <summary>

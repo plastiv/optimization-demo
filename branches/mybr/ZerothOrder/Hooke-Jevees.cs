@@ -47,49 +47,22 @@ namespace OptimizationMethods.ZerothOrder
             // число е>0 для остановки алгоритма
             Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
 
-            double[][] y = new double[param.Dimension + 1][];
-            for (int index = 0; index < param.Dimension + 1; index++)
-            {
-                y[index] = new double[param.Dimension];
-            }
-            y[0] = startPoint;
-
-            double[] basis = startPoint;
+            double[] newBasis = startPoint;
+            double[] oldBasis = startPoint;
 
             while (true)
             {
                 //Шаг 2. Осуществить исследующий поиск по выбранному координатному направлению (i)
-                for (int i = 0; i < param.Dimension; i++)
-                {
-                    if (func(GetPositiveProbe(y, i)) < func(y[i]))
-                    {
-                        // шаг считается удачным
-                        y[i + 1] = GetPositiveProbe(y, i);
-                    }
-                    else
-                    {
-                        // шаг неудачен, делаем шаг в противоположном направлении
-                        if (func(GetNegativeProbe(y, i)) < func(y[i]))
-                        {
-                            // шаг в противоположном направлении считается удачным
-                            y[i + 1] = GetNegativeProbe(y, i);
-                        }
-                        else
-                        {
-                            // оба шага неудачны
-                            y[i + 1] = y[i];
-                        }
-                    }
-                }
+                newBasis = ExploratarySearch(newBasis);
                 // Проверить успешность исследующего поиска:
-                if (func(y[param.Dimension]) < func(basis))
+                if (func(newBasis) < func(oldBasis))
                 {
                     // перейти к шагу 4;
 
                     // Шаг 4. Провести поиск по образцу. Положить xk+l = yn+l,
-                    basis = y[param.Dimension];
+                    oldBasis = newBasis;
                     // y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k]);
-                    y[0] = PatternSearch(basis);
+                    newBasis = PatternSearch(oldBasis);
                     // перейти к шагу 2.
                     continue;
                 }
@@ -110,7 +83,7 @@ namespace OptimizationMethods.ZerothOrder
                             }
                         }
 
-                        y[0] = basis;
+                        newBasis = oldBasis;
                         // перейти к шагу 2.
                         continue;
                     }
@@ -118,7 +91,7 @@ namespace OptimizationMethods.ZerothOrder
                     {
                         // Значение всех шагов меньше точности
                         // Поиск закончен
-                        return basis;
+                        return oldBasis;
                     }
                 }
             }
@@ -126,24 +99,52 @@ namespace OptimizationMethods.ZerothOrder
         #endregion
 
         #region Private Methods
-        private double[] GetPositiveProbe(double[][] y, int i)
+        private double[] ExploratarySearch(double[] point)
+        {
+            for (int i = 0; i < param.Dimension; i++)
+            {
+                if (func(GetPositiveProbe(point, i)) < func(point))
+                {
+                    // шаг считается удачным
+                    point = GetPositiveProbe(point, i);
+                }
+                else
+                {
+                    // шаг неудачен, делаем шаг в противоположном направлении
+                    if (func(GetNegativeProbe(point, i)) < func(point))
+                    {
+                        // шаг в противоположном направлении считается удачным
+                        point = GetNegativeProbe(point, i);
+                    }
+                    else
+                    {
+                        // оба шага неудачны
+                        //y[i + 1] = y[i];
+                    }
+                }
+            }
+
+            return point;
+        }
+
+        private double[] GetPositiveProbe(double[] y, int i)
         {
             double[] solution = new double[param.Dimension];
             for (int j = 0; j < param.Dimension; j++)
             {
-                solution[j] = y[i][j];
+                solution[j] = y[j];
             }
 
             solution[i] += param.Step[i];
             return solution;
         }
 
-        private double[] GetNegativeProbe(double[][] y, int i)
+        private double[] GetNegativeProbe(double[] y, int i)
         {
             double[] solution = new double[param.Dimension];
             for (int j = 0; j < param.Dimension; j++)
             {
-                solution[j] = y[i][j];
+                solution[j] = y[j];
             }
 
             solution[i] -= param.Step[i];

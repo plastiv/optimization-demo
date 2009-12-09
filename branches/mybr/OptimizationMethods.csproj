@@ -58,6 +58,7 @@
     <Compile Include="ZerothOrder\OneVariable\QuadraticInterpolation.cs" />
     <Compile Include="ZerothOrder\OneVariable\TernarySearch.cs" />
     <Compile Include="ZerothOrder\OneVariable\Uniform.cs" />
+    <Compile Include="ZerothOrder\VisualDeformablePolyhedron.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

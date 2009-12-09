@@ -44,7 +44,6 @@
     <Compile Include="ConditionalExtremum\Penalty.cs" />
     <Compile Include="ConditionalExtremum\PenaltyOneDimension.cs" />
     <Compile Include="FirstOrder\GradientDescent.cs" />
-    <Compile Include="FirstOrder\GradientDescent-.cs" />
     <Compile Include="ZerothOrder\DeformablePolyhedron.cs" />
     <Compile Include="ZerothOrder\Hooke-Jevees.cs" />
     <Compile Include="ZerothOrder\OneVariable\Bisection.cs" />

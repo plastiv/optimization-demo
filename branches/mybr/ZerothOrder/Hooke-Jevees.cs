@@ -4,6 +4,9 @@ namespace OptimizationMethods.ZerothOrder
     using OptimizationMethods.ZerothOrder;
     using System.Diagnostics;
 
+    /// <summary>
+    /// Нахождение безусловного минимума функции многих переменных методом Хука-Дживса
+    /// </summary>
     public class Hooke_Jevees
     {
         #region Private Fields

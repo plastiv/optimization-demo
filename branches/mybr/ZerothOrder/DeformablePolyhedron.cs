@@ -44,12 +44,12 @@ namespace OptimizationMethods.ZerothOrder
         /// <summary>
         /// Параметры метода.
         /// </summary>
-        private readonly MethodParams param;
+        protected readonly MethodParams param;
 
         /// <summary>
         /// Минимизируемая функция.
         /// </summary>
-        private readonly ManyVariable func;
+        protected readonly ManyVariable func;
         #endregion
 
         #region Constructors
@@ -89,7 +89,7 @@ namespace OptimizationMethods.ZerothOrder
             Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
 
             Polyhedron polyhedron = new Polyhedron(this.func, this.param, startingPoint);
-
+            int count = 0;
             while (polyhedron.GetSigma() > precision)
             {
                 if (this.func(polyhedron.MirrorVertex.X) <= this.func(polyhedron.BestVertex.X))
@@ -119,6 +119,7 @@ namespace OptimizationMethods.ZerothOrder
                     // выполним редукцию
                     polyhedron.ReductionOperation();
                 }
+                count++;
             }
 
             return polyhedron.BestVertex.ToDouble();
@@ -159,7 +160,7 @@ namespace OptimizationMethods.ZerothOrder
         /// <summary>
         /// Точка (вершина) многогранника.
         /// </summary>
-        internal struct Point
+        protected struct Point
         {
             #region Private Member Variables
             /// <summary>
@@ -305,7 +306,7 @@ namespace OptimizationMethods.ZerothOrder
         /// <summary>
         /// Абстракция многогранника.
         /// </summary>
-        private class Polyhedron
+        protected class Polyhedron
         {
             #region Private Member Variables
             /// <summary>
@@ -326,7 +327,7 @@ namespace OptimizationMethods.ZerothOrder
             /// <summary>
             /// Множество вершин многогранника.
             /// </summary>
-            private Point[] vertex;
+            internal Point[] vertex;
 
             /// <summary>
             /// Вершина, соответвующая центру тяжести многогранника.
@@ -509,7 +510,7 @@ namespace OptimizationMethods.ZerothOrder
                     startingVertex[i] = new Point(this.param.Dimension);
                     for (int j = 0; j < this.param.Dimension; j++)
                     {
-                        startingVertex[0].X[j] = startingPoint[j];
+                        startingVertex[i].X[j] = startingPoint[j];
                     }
 
                     startingVertex[i].X[i - 1] += InitEdgeValue;

@@ -84,6 +84,23 @@ namespace OptimizationMethods.FirstOrder
         {
             searchGradient = GetNumericalGradient;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GradientDescent"/> class.
+        /// </summary>
+        /// <param name="searchFunc">The search func.</param>
+        /// <param name="funcDimension">The func dimension.</param>
+        public GradientDescent(GetManyVariableFunctionValue searchFunc, int funcDimension)
+        {
+            this.param.Dimension = funcDimension;
+            this.param.Epsilon1 = 0.1;
+            this.param.Epsilon2 = 0.15;
+            this.param.MaxIteration = 25;
+            this.param.Step = 2;
+            this.step = param.Step;
+            this.searchFunc = searchFunc;
+            this.searchGradient = GetNumericalGradient;
+        }
         #endregion
 
         #region Public Methods

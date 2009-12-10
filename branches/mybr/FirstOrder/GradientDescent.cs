@@ -138,7 +138,7 @@ namespace OptimizationMethods.FirstOrder
                 }
                 x1[i] -= deltaX;
                 x2[i] += deltaX;
-                solution[i] = System.Math.Abs(searchFunc(x1) - searchFunc(x2)) / (2 * deltaX);
+                solution[i] = (searchFunc(x2) - searchFunc(x1)) / (2 * deltaX);
             }
 
             return solution;

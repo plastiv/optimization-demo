@@ -1,8 +1,14 @@
-﻿
+﻿//-----------------------------------------------------------------------
+// <copyright file="Hooke-Jevees.cs" company="Home Corporation">
+//     Copyright (c) Home Corporation 2009. All rights reserved.
+// </copyright>
+// <author>Sergii Pechenizkyi</author>
+//-----------------------------------------------------------------------
+
 namespace OptimizationMethods.ZerothOrder
 {
-    using OptimizationMethods.ZerothOrder;
     using System.Diagnostics;
+    using OptimizationMethods;
 
     /// <summary>
     /// Нахождение безусловного минимума функции многих переменных методом Хука-Дживса
@@ -10,8 +16,20 @@ namespace OptimizationMethods.ZerothOrder
     public class Hooke_Jevees
     {
         #region Private Fields
-        private ManyVariable func;
-        private MethodParams param;
+        /// <summary>
+        /// Ссылка на функциональную зависимость.
+        /// </summary>
+        private readonly ManyVariable func;
+
+        /// <summary>
+        /// Параметры метода.
+        /// </summary>
+        private readonly MethodParams param;
+
+        /// <summary>
+        /// Значение шага по каждой из координат.
+        /// </summary>
+        private double[] step;
         #endregion
 
         #region Constructors
@@ -20,20 +38,33 @@ namespace OptimizationMethods.ZerothOrder
         /// </summary>
         /// <param name="inputFunc">The input function.</param>
         /// <param name="inputParams">The input method parameters.</param>
-        public Hooke_Jevees(OptimizationMethods.ZerothOrder.ManyVariable inputFunc, MethodParams inputParams)
+        public Hooke_Jevees(ManyVariable inputFunc, MethodParams inputParams)
         {
-            for (int i = 0; i < inputParams.Dimension; i++)
-            {
-                Debug.Assert(inputParams.Step[i] > 0, "Step value is unexepectedly less or equal zero");
-            }
-
             Debug.Assert(inputParams.AccelerateCoefficient > 0, "Accelerate coefficient lyamda is unexepectedly less or equal zero");
             Debug.Assert(inputParams.CoefficientReduction > 1, "Coefficient reduction alfa is unexepectedly less or equal 1");
             Debug.Assert(inputParams.Dimension > 1, "Dimension is unexepectedly less or equal 1");
-            param = inputParams;
+            this.param = inputParams;
 
             Debug.Assert(inputFunc != null, "Input function reference is unexepectedly null");
-            func = inputFunc;
+            this.func = inputFunc;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Hooke_Jevees"/> class.
+        /// </summary>
+        /// <param name="inputFunc">The input function.</param>
+        /// <param name="funcDimension">Количество переменных.</param>
+        public Hooke_Jevees(ManyVariable inputFunc, int funcDimension)
+        {
+            this.func = inputFunc;
+            this.param.AccelerateCoefficient = 1.5;
+            this.param.CoefficientReduction = 4;
+            this.param.Dimension = funcDimension;
+            this.step = new double[funcDimension];
+            for (int i = 0; i < funcDimension; i++)
+            {
+                this.step[i] = 0.1;
+            }
         }
         #endregion
 
@@ -43,7 +74,7 @@ namespace OptimizationMethods.ZerothOrder
         /// </summary>
         /// <param name="startPoint">The start point.</param>
         /// <param name="precision">The precision.</param>
-        /// <returns></returns>
+        /// <returns>Вектор значений х, при котором функция достигает минимума.</returns>
         public double[] GetMinimum(double[] startPoint, double precision)
         {
             // Шаг 1. Задать начальную точку л:0
@@ -55,17 +86,20 @@ namespace OptimizationMethods.ZerothOrder
 
             while (true)
             {
-                //Шаг 2. Осуществить исследующий поиск по выбранному координатному направлению (i)
-                newBasis = ExploratarySearch(newBasis);
+                // Шаг 2. Осуществить исследующий поиск по выбранному координатному направлению (i)
+                newBasis = this.ExploratarySearch(newBasis);
+
                 // Проверить успешность исследующего поиска:
-                if (func(newBasis) < func(oldBasis))
+                if (this.func(newBasis) < this.func(oldBasis))
                 {
                     // перейти к шагу 4;
 
                     // Шаг 4. Провести поиск по образцу. Положить xk+l = yn+l,
                     oldBasis = newBasis;
+
                     // y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k]);
-                    newBasis = PatternSearch(oldBasis);
+                    newBasis = this.PatternSearch(oldBasis);
+
                     // перейти к шагу 2.
                     continue;
                 }
@@ -74,19 +108,20 @@ namespace OptimizationMethods.ZerothOrder
                     // перейти к шагу 5.
 
                     // Шаг 5. Проверить условие окончания:
-                    if (!AllStepsLessPrecision(precision))
+                    if (!this.AllStepsLessPrecision(precision))
                     {
-                        for (int index = 0; index < param.Dimension; index++)
+                        for (int index = 0; index < this.param.Dimension; index++)
                         {
                             // Для значений шагов, больших точности
-                            if (param.Step[index] > precision)
+                            if (this.step[index] > precision)
                             {
                                 // Уменьшить величину шага
-                                param.Step[index] /= param.CoefficientReduction;
+                                this.step[index] /= this.param.CoefficientReduction;
                             }
                         }
 
                         newBasis = oldBasis;
+
                         // перейти к шагу 2.
                         continue;
                     }
@@ -102,27 +137,32 @@ namespace OptimizationMethods.ZerothOrder
         #endregion
 
         #region Private Methods
+        /// <summary>
+        /// Пробный шаг.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <returns>Новую точку.</returns>
         private double[] ExploratarySearch(double[] point)
         {
-            for (int i = 0; i < param.Dimension; i++)
+            for (int i = 0; i < this.param.Dimension; i++)
             {
-                if (func(GetPositiveProbe(point, i)) < func(point))
+                if (this.func(this.GetPositiveProbe(point, i)) < this.func(point))
                 {
                     // шаг считается удачным
-                    point = GetPositiveProbe(point, i);
+                    point = this.GetPositiveProbe(point, i);
                 }
                 else
                 {
                     // шаг неудачен, делаем шаг в противоположном направлении
-                    if (func(GetNegativeProbe(point, i)) < func(point))
+                    if (this.func(this.GetNegativeProbe(point, i)) < this.func(point))
                     {
                         // шаг в противоположном направлении считается удачным
-                        point = GetNegativeProbe(point, i);
+                        point = this.GetNegativeProbe(point, i);
                     }
                     else
                     {
                         // оба шага неудачны
-                        //y[i + 1] = y[i];
+                        // y[i + 1] = y[i];
                     }
                 }
             }
@@ -130,46 +170,68 @@ namespace OptimizationMethods.ZerothOrder
             return point;
         }
 
-        private double[] GetPositiveProbe(double[] y, int i)
+        /// <summary>
+        /// Пробный шаг в положительном направлении.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <param name="i">Координата, по которой делаем шаг.</param>
+        /// <returns>Новую точку.</returns>
+        private double[] GetPositiveProbe(double[] point, int i)
         {
-            double[] solution = new double[param.Dimension];
-            for (int j = 0; j < param.Dimension; j++)
+            double[] solution = new double[this.param.Dimension];
+            for (int j = 0; j < this.param.Dimension; j++)
             {
-                solution[j] = y[j];
+                solution[j] = point[j];
             }
 
-            solution[i] += param.Step[i];
+            solution[i] += this.step[i];
             return solution;
         }
 
-        private double[] GetNegativeProbe(double[] y, int i)
+        /// <summary>
+        /// Пробный шаг в отрицательном направлении.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <param name="i">Координата, по которой делаем шаг.</param>
+        /// <returns>Новую точку.</returns>
+        private double[] GetNegativeProbe(double[] point, int i)
         {
-            double[] solution = new double[param.Dimension];
-            for (int j = 0; j < param.Dimension; j++)
+            double[] solution = new double[this.param.Dimension];
+            for (int j = 0; j < this.param.Dimension; j++)
             {
-                solution[j] = y[j];
+                solution[j] = point[j];
             }
 
-            solution[i] -= param.Step[i];
+            solution[i] -= this.step[i];
             return solution;
         }
 
+        /// <summary>
+        /// Поиск по образцу.
+        /// </summary>
+        /// <param name="basis">The basis.</param>
+        /// <returns>Новую точку.</returns>
         private double[] PatternSearch(double[] basis)
         {
-            double[] solution = new double[param.Dimension];
-            for (int index = 0; index < param.Dimension; index++)
+            double[] solution = new double[this.param.Dimension];
+            for (int index = 0; index < this.param.Dimension; index++)
             {
-                solution[index] = basis[index] + param.AccelerateCoefficient * (basis[index] - basis[index]);
+                solution[index] = basis[index] + (this.param.AccelerateCoefficient * (basis[index] - basis[index]));
             }
 
             return solution;
         }
 
+        /// <summary>
+        /// Alls the steps less precision.
+        /// </summary>
+        /// <param name="precision">The precision.</param>
+        /// <returns>True, если все</returns>
         private bool AllStepsLessPrecision(double precision)
         {
-            for (int index = 0; index < param.Dimension; index++)
+            for (int index = 0; index < this.param.Dimension; index++)
             {
-                if (param.Step[index] > precision)
+                if (this.step[index] > precision)
                 {
                     return false;
                 }
@@ -180,6 +242,9 @@ namespace OptimizationMethods.ZerothOrder
         #endregion
 
         #region Structs
+        /// <summary>
+        /// Параметры метода.
+        /// </summary>
         public struct MethodParams
         {
             /// <summary>

@@ -69,6 +69,20 @@ namespace OptimizationMethods.ZerothOrder
             Debug.Assert(inputFunc != null, "Input function reference is unexepectedly null");
             this.func = inputFunc;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeformablePolyhedron"/> class.
+        /// </summary>
+        /// <param name="inputFunc">The input func.</param>
+        /// <param name="funcDimension">The func dimension.</param>
+        public DeformablePolyhedron(ManyVariable inputFunc, int funcDimension)
+        {
+            this.param.Alfa = 1;
+            this.param.Beta = 0.5;
+            this.param.Dimension = funcDimension;
+            this.param.Gamma = 2;
+            this.func = inputFunc;
+        }
         #endregion
 
         #region Properties

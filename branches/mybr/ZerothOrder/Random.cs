@@ -85,7 +85,7 @@ namespace OptimizationMethods.ZerothOrder
         /// <param name="startPoint">The start point.</param>
         /// <param name="precision">The precision.</param>
         /// <returns>Вектор значений х, при котором функция достигает минимума.</returns>
-        public double[] GetMinimum(double[] startPoint, double precision)
+        internal double[] GetMinimum(double[] startPoint, double precision)
         {
             // Шаг 1. Задать начальную точку л:0
             // число е>0 для остановки алгоритма
@@ -224,42 +224,42 @@ namespace OptimizationMethods.ZerothOrder
         /// <summary>
         /// Параметры метода.
         /// </summary>
-        public struct MethodParams
+        internal struct MethodParams
         {
             /// <summary>
             /// Количество перменных
             /// </summary>
-            public int Dimension;
+            internal int Dimension;
 
             /// <summary>
             /// Коэффициент расширения alfa >= 1
             /// </summary>
-            public double Alfa;
+            internal double Alfa;
 
             /// <summary>
             /// коэффициент сжатия beta>0, 1>beta.
             /// </summary>
-            public double Beta;
+            internal double Beta;
 
             /// <summary>
             /// Минимальная величина шага.
             /// </summary>
-            public double MinStepValue;
+            internal double MinStepValue;
 
             /// <summary>
             /// Начальная величина шага.
             /// </summary>
-            public double StartStepValue;
+            internal double StartStepValue;
 
             /// <summary>
             /// Максимальное количество испытаний.
             /// </summary>
-            public int ExaminationCount;
+            internal int ExaminationCount;
 
             /// <summary>
             /// Максимальное количество итераций алгоритма.
             /// </summary>
-            public int IterationCount;
+            internal int IterationCount;
         }
         #endregion
     }

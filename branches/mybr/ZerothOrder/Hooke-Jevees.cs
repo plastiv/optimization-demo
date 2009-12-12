@@ -44,6 +44,7 @@ namespace OptimizationMethods.ZerothOrder
             Debug.Assert(inputParams.CoefficientReduction > 1, "Coefficient reduction alfa is unexepectedly less or equal 1");
             Debug.Assert(inputParams.Dimension > 1, "Dimension is unexepectedly less or equal 1");
             this.param = inputParams;
+            this.step = inputParams.Step;
 
             Debug.Assert(inputFunc != null, "Input function reference is unexepectedly null");
             this.func = inputFunc;

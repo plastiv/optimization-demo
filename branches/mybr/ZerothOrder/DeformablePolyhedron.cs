@@ -8,13 +8,7 @@
 namespace OptimizationMethods.ZerothOrder
 {
     using System.Diagnostics;
-
-    /// <summary>
-    /// Ссылка на функциональную зависимость f(x1,х2,...,хn).
-    /// </summary>
-    /// <param name="x">Вектор значений переменных x1,х2,...,хn.</param>
-    /// <returns>Значение функции у=f(x1,х2,...,хn).</returns>
-    public delegate double ManyVariable(double[] x);
+    using OptimizationMethods;
 
     /// <summary>
     /// Нахождение безусловного минимума функции многих переменных методом деформируемого многогранника
@@ -44,12 +38,12 @@ namespace OptimizationMethods.ZerothOrder
         /// <summary>
         /// Параметры метода.
         /// </summary>
-        protected readonly MethodParams param;
+        protected readonly MethodParams Param;
 
         /// <summary>
         /// Минимизируемая функция.
         /// </summary>
-        protected readonly ManyVariable func;
+        protected readonly ManyVariable Func;
         #endregion
 
         #region Constructors
@@ -64,10 +58,10 @@ namespace OptimizationMethods.ZerothOrder
             Debug.Assert(inputParams.Beta > 0, "Alfa coefficient is unexepectedly less or equal zero");
             Debug.Assert(inputParams.Gamma > 0, "Alfa coefficient is unexepectedly less or equal zero");
             Debug.Assert(inputParams.Dimension > 1, "Dimension is unexepectedly less or equal 1");
-            this.param = inputParams;
+            this.Param = inputParams;
 
             Debug.Assert(inputFunc != null, "Input function reference is unexepectedly null");
-            this.func = inputFunc;
+            this.Func = inputFunc;
         }
 
         /// <summary>
@@ -77,11 +71,11 @@ namespace OptimizationMethods.ZerothOrder
         /// <param name="funcDimension">The func dimension.</param>
         public DeformablePolyhedron(ManyVariable inputFunc, int funcDimension)
         {
-            this.param.Alfa = 1;
-            this.param.Beta = 0.5;
-            this.param.Dimension = funcDimension;
-            this.param.Gamma = 2;
-            this.func = inputFunc;
+            this.Param.Alfa = 1;
+            this.Param.Beta = 0.5;
+            this.Param.Dimension = funcDimension;
+            this.Param.Gamma = 2;
+            this.Func = inputFunc;
         }
         #endregion
 
@@ -102,13 +96,13 @@ namespace OptimizationMethods.ZerothOrder
         {
             Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
 
-            Polyhedron polyhedron = new Polyhedron(this.func, this.param, startingPoint);
+            Polyhedron polyhedron = new Polyhedron(this.Func, this.Param, startingPoint);
             int count = 0;
             while (polyhedron.GetSigma() > precision)
             {
-                if (this.func(polyhedron.MirrorVertex.X) <= this.func(polyhedron.BestVertex.X))
+                if (this.Func(polyhedron.MirrorVertex.X) <= this.Func(polyhedron.BestVertex.X))
                 {
-                    if (this.func(polyhedron.ExtensionVertex.X) < this.func(polyhedron.BestVertex.X))
+                    if (this.Func(polyhedron.ExtensionVertex.X) < this.Func(polyhedron.BestVertex.X))
                     {
                         // выполним растяжение
                         polyhedron.WorstVertex = polyhedron.ExtensionVertex;
@@ -119,20 +113,21 @@ namespace OptimizationMethods.ZerothOrder
                         polyhedron.WorstVertex = polyhedron.MirrorVertex;
                     }
                 }
-                else if (this.func(polyhedron.SecondBestVertex.X) < this.func(polyhedron.MirrorVertex.X) && this.func(polyhedron.MirrorVertex.X) <= this.func(polyhedron.WorstVertex.X))
+                else if (this.Func(polyhedron.SecondBestVertex.X) < this.Func(polyhedron.MirrorVertex.X) && this.Func(polyhedron.MirrorVertex.X) <= this.Func(polyhedron.WorstVertex.X))
                 {
                     // выполним сжатие
                     polyhedron.WorstVertex = polyhedron.CompressionVertex;
                 }
-                else if (this.func(polyhedron.BestVertex.X) < this.func(polyhedron.MirrorVertex.X) && this.func(polyhedron.MirrorVertex.X) <= this.func(polyhedron.SecondBestVertex.X))
+                else if (this.Func(polyhedron.BestVertex.X) < this.Func(polyhedron.MirrorVertex.X) && this.Func(polyhedron.MirrorVertex.X) <= this.Func(polyhedron.SecondBestVertex.X))
                 {
                     polyhedron.WorstVertex = polyhedron.MirrorVertex;
                 }
-                else if (this.func(polyhedron.MirrorVertex.X) > this.func(polyhedron.BestVertex.X))
+                else if (this.Func(polyhedron.MirrorVertex.X) > this.Func(polyhedron.BestVertex.X))
                 {
                     // выполним редукцию
                     polyhedron.ReductionOperation();
                 }
+
                 count++;
             }
 
@@ -339,14 +334,14 @@ namespace OptimizationMethods.ZerothOrder
             private readonly ManyVariable func;
 
             /// <summary>
-            /// Множество вершин многогранника.
-            /// </summary>
-            internal Point[] vertex;
-
-            /// <summary>
             /// Вершина, соответвующая центру тяжести многогранника.
             /// </summary>
             private Point centerOfGravity;
+
+            /// <summary>
+            /// Множество вершин многогранника.
+            /// </summary>
+            private Point[] vertex;
             #endregion
 
             #region Constructors
@@ -425,6 +420,16 @@ namespace OptimizationMethods.ZerothOrder
             internal Point CompressionVertex
             {
                 get { return this.centerOfGravity + (this.param.Beta * (this.WorstVertex - this.centerOfGravity)); }
+            }
+
+            /// <summary>
+            /// Gets or sets the vertex.
+            /// </summary>
+            /// <value>The vertex.</value>
+            internal Point[] Vertex
+            {
+                get { return this.vertex; }
+                set { this.vertex = value; }
             }
             #endregion
 

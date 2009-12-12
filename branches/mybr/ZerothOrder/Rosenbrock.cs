@@ -1,11 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Rosenbrock.cs" company="Home Corporation">
+//     Copyright (c) Home Corporation 2009. All rights reserved.
+// </copyright>
+// <author>Sergii Pechenizkyi</author>
+//-----------------------------------------------------------------------
 
 namespace OptimizationMethods.ZerothOrder
 {
     using System.Diagnostics;
 
+    /// <summary>
+    /// Нахождение безусловного минимума функции многих переменных методом Розенброка
+    /// </summary>
     internal class Rosenbrock
     {
         // TODO: доделать метод
@@ -28,15 +34,12 @@ namespace OptimizationMethods.ZerothOrder
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="Hooke_Jevees"/> class.
+        /// Initializes a new instance of the <see cref="Rosenbrock"/> class.
         /// </summary>
         /// <param name="inputFunc">The input function.</param>
         /// <param name="inputParams">The input method parameters.</param>
         public Rosenbrock(ManyVariable inputFunc, MethodParams inputParams)
         {
-            //Debug.Assert(inputParams.AccelerateCoefficient > 0, "Accelerate coefficient lyamda is unexepectedly less or equal zero");
-            //Debug.Assert(inputParams.CoefficientReduction > 1, "Coefficient reduction alfa is unexepectedly less or equal 1");
-            //Debug.Assert(inputParams.Dimension > 1, "Dimension is unexepectedly less or equal 1");
             this.param = inputParams;
 
             Debug.Assert(inputFunc != null, "Input function reference is unexepectedly null");
@@ -44,7 +47,7 @@ namespace OptimizationMethods.ZerothOrder
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Hooke_Jevees"/> class.
+        /// Initializes a new instance of the <see cref="Rosenbrock"/> class.
         /// </summary>
         /// <param name="inputFunc">The input function.</param>
         /// <param name="funcDimension">Количество переменных.</param>
@@ -130,13 +133,13 @@ namespace OptimizationMethods.ZerothOrder
                 {
                     // шаг считается удачным
                     point = this.GetPositiveProbe(point, i);
-                    this.step[i] *= param.Alfa;
+                    this.step[i] *= this.param.Alfa;
                 }
                 else
                 {
                     // шаг неудачен
                     // y[i + 1] = y[i];
-                    this.step[i] *= param.Beta;
+                    this.step[i] *= this.param.Beta;
                 }
             }
 
@@ -220,7 +223,7 @@ namespace OptimizationMethods.ZerothOrder
             public double Alfa;
 
             /// <summary>
-            /// коэффициент сжатия -1 < beta < 0.
+            /// коэффициент сжатия beta.
             /// </summary>
             public double Beta;
 

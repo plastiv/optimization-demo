@@ -136,52 +136,59 @@ namespace OptimizationMethods.FirstOrder
         /// <returns>Матрицу значений х, где первый мтератог - номер шага, второй итератор - указывает переменную, при котором функция достигает минимума.</returns>
         internal double[][] GetExtendedMinimum(double[] startPoint)
         {
-            int iteration = 0;
-            double[][] currPoint = new double[this.Param.IterationCount][];
+            double[][] result = new double[this.Param.IterationCount][];
             for (int i = 0; i < this.Param.IterationCount; i++)
             {
-                currPoint[i] = new double[this.Param.Dimension];
-                for (int j = 0; j < this.Param.Dimension; j++)
-                {
-                    currPoint[i][j] = startPoint[j];
-                }
+                result[i] = new double[this.Param.Dimension];
+            }
+
+            double[] currPoint = new double[this.Param.Dimension];
+            for (int i = 0; i < this.Param.Dimension; i++)
+            {
+                currPoint[i] = startPoint[i];
             }
 
             double[] prevPoint = new double[this.Param.Dimension];
             double[] prevPrevPoint = new double[this.Param.Dimension];
 
-            while (iteration < this.Param.IterationCount && this.GetEuclideanNorm(this.SearchGradient(currPoint[iteration])) > this.Param.Epsilon1)
+            int iteration = 0;
+
+            while (iteration < this.Param.IterationCount && this.GetEuclideanNorm(this.SearchGradient(currPoint)) > this.Param.Epsilon1)
             {
                 for (int i = 0; i < this.Param.Dimension; i++)
                 {
                     prevPrevPoint[i] = prevPoint[i];
-                    prevPoint[i] = currPoint[iteration][i];
+                    prevPoint[i] = currPoint[i];
                 }
 
-                currPoint[iteration] = this.GetNextPoint(prevPoint);
+                currPoint = this.GetNextPoint(prevPoint);
+                for (int i = 0; i < this.Param.Dimension; i++)
+                {
+                    result[iteration][i] = currPoint[i];
+                }
 
-                if (this.IsCondition(currPoint[iteration], prevPoint))
+                if (this.IsCondition(currPoint, prevPoint))
                 {
                     if (this.IsCondition(prevPoint, prevPrevPoint))
                     {
-                        return currPoint;
+                        double[][] newResult = new double[iteration][];
+                        for (int i = 0; i < iteration; i++)
+                        {
+                            newResult[i] = new double[this.Param.Dimension];
+                            for (int j = 0; j < this.Param.Dimension; j++)
+                            {
+                                newResult[i][j] = result[i][j];
+                            }
+                        }
+
+                        return newResult;
                     }
                 }
 
                 iteration++;
             }
 
-            double[][] solution = new double[iteration + 1][];
-            for (int i = 0; i < iteration + 1; i++)
-            {
-                solution[i] = new double[this.Param.Dimension];
-                for (int j = 0; j < this.Param.Dimension; j++)
-                {
-                    solution[i][j] = currPoint[i][j];
-                }
-            }
-
-            return solution;
+            return result;
         }
         #endregion
 

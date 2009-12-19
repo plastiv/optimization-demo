@@ -13,7 +13,7 @@ namespace OptimizationMethods.FirstOrder
     /// <summary>
     /// Метод градиентного спуска с постоянным шагом
     /// </summary>
-    public class GradientDescent
+    internal class GradientDescent
     {
         #region Private Fields
         /// <summary>
@@ -92,7 +92,7 @@ namespace OptimizationMethods.FirstOrder
         /// </summary>
         /// <param name="startPoint">Начальная точка.</param>
         /// <returns>Вектор значений х, при котором функция достигает минимума.</returns>
-        public double[] GetMinimum(double[] startPoint)
+        internal double[] GetMinimum(double[] startPoint)
         {
             double[] currPoint = new double[this.Param.Dimension];
             for (int i = 0; i < this.Param.Dimension; i++)
@@ -134,7 +134,7 @@ namespace OptimizationMethods.FirstOrder
         /// </summary>
         /// <param name="startPoint">Начальная точка.</param>
         /// <returns>Матрицу значений х, где первый мтератог - номер шага, второй итератор - указывает переменную, при котором функция достигает минимума.</returns>
-        public double[][] GetExtendedMinimum(double[] startPoint)
+        internal double[][] GetExtendedMinimum(double[] startPoint)
         {
             int iteration = 0;
             double[][] currPoint = new double[this.Param.IterationCount][];

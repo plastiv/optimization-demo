@@ -48,6 +48,19 @@ namespace OptimizationMethods
         }
 
         /// <summary>
+        /// Gradients the descent.
+        /// </summary>
+        /// <param name="function">The function.</param>
+        /// <param name="dimension">The dimension.</param>
+        /// <param name="startingPoint">The starting point.</param>
+        /// <returns>Минимум функции со значениями промежуточных точек.</returns>
+        public static double[][] GradientDescentExtended(ManyVariable function, int dimension, double[] startingPoint)
+        {
+            GradientDescent gd = new GradientDescent(function, dimension);
+            return gd.GetExtendedMinimum(startingPoint);
+        }
+
+        /// <summary>
         /// Нахождение безусловного минимума функции многих переменных методом деформируемого многогранника.
         /// </summary>
         /// <param name="function">The function.</param>

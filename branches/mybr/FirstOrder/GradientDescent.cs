@@ -153,6 +153,11 @@ namespace OptimizationMethods.FirstOrder
 
             int iteration = 0;
 
+            for (int i = 0; i < this.Param.Dimension; i++)
+            {
+                result[iteration][i] = currPoint[i];
+            }
+
             while (iteration < this.Param.IterationCount && this.GetEuclideanNorm(this.SearchGradient(currPoint)) > this.Param.Epsilon1)
             {
                 for (int i = 0; i < this.Param.Dimension; i++)
@@ -161,17 +166,18 @@ namespace OptimizationMethods.FirstOrder
                     prevPoint[i] = currPoint[i];
                 }
 
-                currPoint = this.GetNextPoint(prevPoint);
                 for (int i = 0; i < this.Param.Dimension; i++)
                 {
                     result[iteration][i] = currPoint[i];
                 }
 
+                currPoint = this.GetNextPoint(prevPoint);
+
                 if (this.IsCondition(currPoint, prevPoint))
                 {
                     if (this.IsCondition(prevPoint, prevPrevPoint))
                     {
-                        double[][] newResult = new double[iteration][];
+                        double[][] newResult = new double[iteration + 1][];
                         for (int i = 0; i < iteration; i++)
                         {
                             newResult[i] = new double[this.Param.Dimension];
@@ -179,6 +185,12 @@ namespace OptimizationMethods.FirstOrder
                             {
                                 newResult[i][j] = result[i][j];
                             }
+                        }
+
+                        newResult[iteration] = new double[this.Param.Dimension];
+                        for (int j = 0; j < this.Param.Dimension; j++)
+                        {
+                            newResult[iteration][j] = currPoint[j];
                         }
 
                         return newResult;

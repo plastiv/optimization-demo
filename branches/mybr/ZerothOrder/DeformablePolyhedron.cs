@@ -28,7 +28,7 @@ namespace OptimizationMethods.ZerothOrder
     /// в вершинах текущего многогранника отличаются от значения функции в центре
     /// тяжести системы xi(k), i = 1,... ,n +1; i!=h не более чем на е &gt; 0.
     /// ------------------------------------------------------------------------------------------------
-    public class DeformablePolyhedron
+    internal class DeformablePolyhedron
     {
         #region Public Fields
 
@@ -38,12 +38,12 @@ namespace OptimizationMethods.ZerothOrder
         /// <summary>
         /// Параметры метода.
         /// </summary>
-        protected readonly MethodParams Param;
+        private readonly MethodParams Param;
 
         /// <summary>
         /// Минимизируемая функция.
         /// </summary>
-        protected readonly ManyVariable Func;
+        private readonly ManyVariable Func;
         #endregion
 
         #region Constructors
@@ -92,7 +92,7 @@ namespace OptimizationMethods.ZerothOrder
         /// <returns>
         /// Вектор значений х, при котором функция достигает минимума.
         /// </returns>
-        public double[] GetMinimum(double[] startingPoint, double precision)
+        internal double[] GetMinimum(double[] startingPoint, double precision)
         {
             Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
 
@@ -132,6 +132,99 @@ namespace OptimizationMethods.ZerothOrder
             }
 
             return polyhedron.BestVertex.ToDouble();
+        }
+
+        /// <summary>
+        /// Нахождение безусловного минимума функции многих переменных.
+        /// </summary>
+        /// <param name="startingPoint">The starting point.</param>
+        /// <param name="precision">The precision.</param>
+        /// <returns>
+        /// Вектор значений х, при котором функция достигает минимума.
+        /// </returns>
+        internal double[][][] GetExtendedMinimum(double[] startingPoint, double precision)
+        {
+            Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
+
+            Polyhedron polyhedron = new Polyhedron(this.Func, this.Param, startingPoint);
+            int polyhedronCount = 20;
+            double[][][] solution = new double[polyhedronCount][][];
+            for (int i = 0; i < polyhedronCount; i++)
+            {
+                solution[i] = new double[this.Param.Dimension + 1][];
+                for (int j = 0; j < this.Param.Dimension + 1; j++)
+                {
+                    solution[i][j] = new double[this.Param.Dimension];
+                }
+            }
+
+            int iteration = 0;
+            for (int i = 0; i < this.Param.Dimension + 1; i++)
+            {
+                for (int j = 0; j < this.Param.Dimension; j++)
+                {
+                    solution[iteration][i][j] = polyhedron.Vertex[i].X[j];
+                }
+            }
+
+            iteration++;
+
+            while (polyhedron.GetSigma() > precision)
+            {
+                if (this.Func(polyhedron.MirrorVertex.X) <= this.Func(polyhedron.BestVertex.X))
+                {
+                    if (this.Func(polyhedron.ExtensionVertex.X) < this.Func(polyhedron.BestVertex.X))
+                    {
+                        // выполним растяжение
+                        polyhedron.WorstVertex = polyhedron.ExtensionVertex;
+                    }
+                    else
+                    {
+                        // выполним отражение
+                        polyhedron.WorstVertex = polyhedron.MirrorVertex;
+                    }
+                }
+                else if (this.Func(polyhedron.SecondBestVertex.X) < this.Func(polyhedron.MirrorVertex.X) && this.Func(polyhedron.MirrorVertex.X) <= this.Func(polyhedron.WorstVertex.X))
+                {
+                    // выполним сжатие
+                    polyhedron.WorstVertex = polyhedron.CompressionVertex;
+                }
+                else if (this.Func(polyhedron.BestVertex.X) < this.Func(polyhedron.MirrorVertex.X) && this.Func(polyhedron.MirrorVertex.X) <= this.Func(polyhedron.SecondBestVertex.X))
+                {
+                    polyhedron.WorstVertex = polyhedron.MirrorVertex;
+                }
+                else if (this.Func(polyhedron.MirrorVertex.X) > this.Func(polyhedron.BestVertex.X))
+                {
+                    // выполним редукцию
+                    polyhedron.ReductionOperation();
+                }
+
+                for (int i = 0; i < this.Param.Dimension + 1; i++)
+                {
+                    for (int j = 0; j < this.Param.Dimension; j++)
+                    {
+                        solution[iteration][i][j] = polyhedron.Vertex[i].X[j];
+                    }
+                }
+
+                iteration++;
+            }
+
+            double[][][] newSolution = new double[iteration][][];
+            for (int i = 0; i < iteration; i++)
+            {
+                newSolution[i] = new double[this.Param.Dimension + 1][];
+                for (int j = 0; j < this.Param.Dimension + 1; j++)
+                {
+                    newSolution[i][j] = new double[this.Param.Dimension];
+                    for (int k = 0; k < this.Param.Dimension; k++)
+                    {
+                        newSolution[i][j][k] = solution[i][j][k];
+                    }
+                }
+            }
+
+            return newSolution;
         }
         #endregion
 
@@ -315,7 +408,7 @@ namespace OptimizationMethods.ZerothOrder
         /// <summary>
         /// Абстракция многогранника.
         /// </summary>
-        protected class Polyhedron
+        private class Polyhedron
         {
             #region Private Member Variables
             /// <summary>

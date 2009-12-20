@@ -13,7 +13,7 @@ namespace OptimizationMethods.ZerothOrder
     /// <summary>
     /// Нахождение безусловного минимума функции многих переменных методом Хука-Дживса
     /// </summary>
-    public class Hooke_Jevees
+    internal class Hooke_Jevees
     {
         #region Private Fields
         /// <summary>
@@ -76,7 +76,7 @@ namespace OptimizationMethods.ZerothOrder
         /// <param name="startPoint">The start point.</param>
         /// <param name="precision">The precision.</param>
         /// <returns>Вектор значений х, при котором функция достигает минимума.</returns>
-        public double[] GetMinimum(double[] startPoint, double precision)
+        internal double[] GetMinimum(double[] startPoint, double precision)
         {
             // Шаг 1. Задать начальную точку л:0
             // число е>0 для остановки алгоритма
@@ -95,11 +95,18 @@ namespace OptimizationMethods.ZerothOrder
                 {
                     // перейти к шагу 4;
 
-                    // Шаг 4. Провести поиск по образцу. Положить xk+l = yn+l,
+                    // Сформируем х[k]
+                    double[] oldOldBasis = new double[this.param.Dimension];
+                    for (int i = 0; i < this.param.Dimension; i++)
+                    {
+                        oldOldBasis[i] = oldBasis[i];
+                    }
+
+                    // Шаг 4. Провести поиск по образцу. Положить x[k + 1] = yn+l,
                     oldBasis = newBasis;
 
                     // y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k]);
-                    newBasis = this.PatternSearch(oldBasis);
+                    newBasis = this.PatternSearch(oldOldBasis, oldBasis);
 
                     // перейти к шагу 2.
                     continue;
@@ -131,6 +138,105 @@ namespace OptimizationMethods.ZerothOrder
                         // Значение всех шагов меньше точности
                         // Поиск закончен
                         return oldBasis;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the minimum.
+        /// </summary>
+        /// <param name="startPoint">The start point.</param>
+        /// <param name="precision">The precision.</param>
+        /// <returns>Вектор значений х, при котором функция достигает минимума.</returns>
+        internal double[][] GetMinimumExtended(double[] startPoint, double precision)
+        {
+            // Шаг 1. Задать начальную точку л:0
+            // число е>0 для остановки алгоритма
+            Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
+
+            // MAGIC KEY
+            int count = 40;
+            int solIndex = 0;
+            double[][] sols = new double[count][];
+            for (int i = 0; i < count; i++)
+            {
+                sols[i] = new double[this.param.Dimension];
+            }
+
+            double[] newBasis = startPoint;
+            double[] oldBasis = startPoint;
+
+            while (true)
+            {
+                for (int i = 0; i < this.param.Dimension; i++)
+                {
+                    sols[solIndex][i] = newBasis[i];
+                }
+
+                solIndex++;
+
+                // Шаг 2. Осуществить исследующий поиск по выбранному координатному направлению (i)
+                newBasis = this.ExploratarySearch(newBasis);
+
+                // Проверить успешность исследующего поиска:
+                if (this.func(newBasis) < this.func(oldBasis))
+                {
+                    // перейти к шагу 4;
+
+                    // Сформируем х[k]
+                    double[] oldOldBasis = new double[this.param.Dimension];
+                    for (int i = 0; i < this.param.Dimension; i++)
+                    {
+                        oldOldBasis[i] = oldBasis[i];
+                    }
+
+                    // Шаг 4. Провести поиск по образцу. Положить x[k + 1] = yn+l,
+                    oldBasis = newBasis;
+
+                    // y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k]);
+                    newBasis = this.PatternSearch(oldOldBasis, oldBasis);
+
+                    // перейти к шагу 2.
+                    continue;
+                }
+                else
+                {
+                    // перейти к шагу 5.
+
+                    // Шаг 5. Проверить условие окончания:
+                    if (!this.AllStepsLessPrecision(precision))
+                    {
+                        for (int index = 0; index < this.param.Dimension; index++)
+                        {
+                            // Для значений шагов, больших точности
+                            if (this.step[index] > precision)
+                            {
+                                // Уменьшить величину шага
+                                this.step[index] /= this.param.CoefficientReduction;
+                            }
+                        }
+
+                        newBasis = oldBasis;
+
+                        // перейти к шагу 2.
+                        continue;
+                    }
+                    else
+                    {
+                        // Значение всех шагов меньше точности
+                        // Поиск закончен
+                        double[][] newResult = new double[solIndex][];
+                        for (int i = 0; i < solIndex; i++)
+                        {
+                            newResult[i] = new double[this.param.Dimension];
+                            for (int j = 0; j < this.param.Dimension; j++)
+                            {
+                                newResult[i][j] = sols[i][j];
+                            }
+                        }
+
+                        return newResult;
                     }
                 }
             }
@@ -208,16 +314,17 @@ namespace OptimizationMethods.ZerothOrder
         }
 
         /// <summary>
-        /// Поиск по образцу.
+        /// Поиск по образцу. y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k])
         /// </summary>
+        /// <param name="oldBasis">The old basis.</param>
         /// <param name="basis">The basis.</param>
         /// <returns>Новую точку.</returns>
-        private double[] PatternSearch(double[] basis)
+        private double[] PatternSearch(double[] oldBasis, double[] basis)
         {
             double[] solution = new double[this.param.Dimension];
             for (int index = 0; index < this.param.Dimension; index++)
             {
-                solution[index] = basis[index] + (this.param.AccelerateCoefficient * (basis[index] - basis[index]));
+                solution[index] = basis[index] + (this.param.AccelerateCoefficient * (basis[index] - oldBasis[index]));
             }
 
             return solution;
@@ -246,7 +353,7 @@ namespace OptimizationMethods.ZerothOrder
         /// <summary>
         /// Параметры метода.
         /// </summary>
-        public struct MethodParams
+        internal struct MethodParams
         {
             /// <summary>
             /// начальные величины шагов по координатным направлениям di,...,dn > 0

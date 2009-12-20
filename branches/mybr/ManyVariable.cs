@@ -100,6 +100,19 @@ namespace OptimizationMethods
         }
 
         /// <summary>
+        /// Нахождение безусловного минимума функции многих переменных методом Хука-Дживса.
+        /// </summary>
+        /// <param name="function">The function.</param>
+        /// <param name="dimension">The dimension.</param>
+        /// <param name="startingPoint">The starting point.</param>
+        /// <returns>Минимум функции.</returns>
+        public static double[][] HookeJeveesExtended(ManyVariable function, int dimension, double[] startingPoint)
+        {
+            Hooke_Jevees hj = new Hooke_Jevees(function, dimension);
+            return hj.GetMinimumExtended(startingPoint, Precision);
+        }
+
+        /// <summary>
         /// Rosenbrocks the specified function.
         /// </summary>
         /// <param name="function">The function.</param>

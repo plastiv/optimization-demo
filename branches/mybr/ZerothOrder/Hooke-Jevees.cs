@@ -196,7 +196,7 @@ namespace OptimizationMethods.ZerothOrder
 
                     // y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k]);
                     newBasis = this.PatternSearch(oldOldBasis, oldBasis);
-
+                    
                     // перейти к шагу 2.
                     continue;
                 }
@@ -218,7 +218,7 @@ namespace OptimizationMethods.ZerothOrder
                         }
 
                         newBasis = oldBasis;
-
+                        solIndex--;
                         // перейти к шагу 2.
                         continue;
                     }

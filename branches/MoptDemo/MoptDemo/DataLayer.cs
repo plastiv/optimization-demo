@@ -28,7 +28,7 @@ namespace MoptDemo
 
         #region Private Fields
         private double[][] solutions;
-        //private int solutionCount;
+        private int solutionCount;
         #endregion
 
         #region Constructors

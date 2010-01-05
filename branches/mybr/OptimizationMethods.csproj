@@ -44,6 +44,7 @@
     <Compile Include="FirstOrder\GradientDescent.cs" />
     <Compile Include="ManyVariable.cs" />
     <Compile Include="PenaltyAndBarrier.cs" />
+    <Compile Include="ZerothOrder\Hooke-JeveesExtended.cs" />
     <Compile Include="ZerothOrder\DeformablePolyhedron.cs" />
     <Compile Include="ZerothOrder\Hooke-Jevees.cs" />
     <Compile Include="ZerothOrder\OneVariable\Bisection.cs" />

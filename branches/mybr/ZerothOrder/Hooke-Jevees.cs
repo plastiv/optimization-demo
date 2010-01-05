@@ -9,6 +9,7 @@ namespace OptimizationMethods.ZerothOrder
 {
     using System.Diagnostics;
     using OptimizationMethods;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Нахождение безусловного минимума функции многих переменных методом Хука-Дживса
@@ -64,7 +65,7 @@ namespace OptimizationMethods.ZerothOrder
             this.step = new double[funcDimension];
             for (int i = 0; i < funcDimension; i++)
             {
-                this.step[i] = 0.1;
+                this.step[i] = 1;
             }
         }
         #endregion
@@ -154,30 +155,33 @@ namespace OptimizationMethods.ZerothOrder
             // Шаг 1. Задать начальную точку л:0
             // число е>0 для остановки алгоритма
             Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
-
+            List<double[]> mylist = new List<double[]>();
             // MAGIC KEY
-            int count = 40;
-            int solIndex = 0;
-            double[][] sols = new double[count][];
-            for (int i = 0; i < count; i++)
-            {
-                sols[i] = new double[this.param.Dimension];
-            }
+            //int count = 40;
+            //int solIndex = 0;
+            //double[][] sols = new double[count][];
+            //for (int i = 0; i < count; i++)
+            //{
+            //    sols[i] = new double[this.param.Dimension];
+            //}
 
             double[] newBasis = startPoint;
             double[] oldBasis = startPoint;
+            mylist.Add(newBasis);
 
             while (true)
             {
-                for (int i = 0; i < this.param.Dimension; i++)
-                {
-                    sols[solIndex][i] = newBasis[i];
-                }
+                //for (int i = 0; i < this.param.Dimension; i++)
+                //{
+                //    sols[solIndex][i] = newBasis[i];
+                //}
 
-                solIndex++;
+                //solIndex++;
+                
 
                 // Шаг 2. Осуществить исследующий поиск по выбранному координатному направлению (i)
                 newBasis = this.ExploratarySearch(newBasis);
+                mylist.Add(newBasis);
 
                 // Проверить успешность исследующего поиска:
                 if (this.func(newBasis) < this.func(oldBasis))
@@ -196,7 +200,7 @@ namespace OptimizationMethods.ZerothOrder
 
                     // y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k]);
                     newBasis = this.PatternSearch(oldOldBasis, oldBasis);
-                    
+                    mylist.Add(newBasis);
                     // перейти к шагу 2.
                     continue;
                 }
@@ -218,7 +222,8 @@ namespace OptimizationMethods.ZerothOrder
                         }
 
                         newBasis = oldBasis;
-                        solIndex--;
+                        mylist.Add(newBasis);
+                        //solIndex--;
                         // перейти к шагу 2.
                         continue;
                     }
@@ -226,17 +231,17 @@ namespace OptimizationMethods.ZerothOrder
                     {
                         // Значение всех шагов меньше точности
                         // Поиск закончен
-                        double[][] newResult = new double[solIndex][];
-                        for (int i = 0; i < solIndex; i++)
-                        {
-                            newResult[i] = new double[this.param.Dimension];
-                            for (int j = 0; j < this.param.Dimension; j++)
-                            {
-                                newResult[i][j] = sols[i][j];
-                            }
-                        }
-
-                        return newResult;
+                        //double[][] newResult = new double[solIndex][];
+                        //for (int i = 0; i < solIndex; i++)
+                        //{
+                        //    newResult[i] = new double[this.param.Dimension];
+                        //    for (int j = 0; j < this.param.Dimension; j++)
+                        //    {
+                        //        newResult[i][j] = sols[i][j];
+                        //    }
+                        //}
+                        
+                        return mylist.ToArray();
                     }
                 }
             }
@@ -250,6 +255,34 @@ namespace OptimizationMethods.ZerothOrder
         /// <param name="point">The point.</param>
         /// <returns>Новую точку.</returns>
         private double[] ExploratarySearch(double[] point)
+        {
+            for (int i = 0; i < this.param.Dimension; i++)
+            {
+                if (this.func(this.GetPositiveProbe(point, i)) < this.func(point))
+                {
+                    // шаг считается удачным
+                    point = this.GetPositiveProbe(point, i);
+                }
+                else
+                {
+                    // шаг неудачен, делаем шаг в противоположном направлении
+                    if (this.func(this.GetNegativeProbe(point, i)) < this.func(point))
+                    {
+                        // шаг в противоположном направлении считается удачным
+                        point = this.GetNegativeProbe(point, i);
+                    }
+                    else
+                    {
+                        // оба шага неудачны
+                        // y[i + 1] = y[i];
+                    }
+                }
+            }
+
+            return point;
+        }
+
+        private double[] ExploratarySearchExtended(double[] point)
         {
             for (int i = 0; i < this.param.Dimension; i++)
             {

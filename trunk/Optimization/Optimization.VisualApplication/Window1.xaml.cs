@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.Research.DynamicDataDisplay.Charts.Shapes;
 
-namespace MoptDemo
+namespace Optimization.VisualApplication
 {
     /// <summary>
     /// Interaction logic for Window1.xaml
@@ -32,9 +32,9 @@ namespace MoptDemo
         public Window1()
         {
             InitializeComponent();
-            minValue = MoptDemo.Properties.Settings.Default.MinValue;
-            maxValue = MoptDemo.Properties.Settings.Default.MaxValue;
-            pointCount = MoptDemo.Properties.Settings.Default.PointCount;
+            minValue = Optimization.VisualApplication.Properties.Settings.Default.MinValue;
+            maxValue = Optimization.VisualApplication.Properties.Settings.Default.MaxValue;
+            pointCount = Optimization.VisualApplication.Properties.Settings.Default.PointCount;
 
             solPointCount = 0;
             solPointIndex = 0;

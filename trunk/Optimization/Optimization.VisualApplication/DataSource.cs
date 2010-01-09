@@ -5,7 +5,7 @@
 // <author>Sergii Pechenizkyi</author>
 //-----------------------------------------------------------------------
 
-namespace MoptDemo
+namespace Optimization.VisualApplication
 {
     using System.Windows;
     using Microsoft.Research.DynamicDataDisplay.DataSources.MultiDimensional;

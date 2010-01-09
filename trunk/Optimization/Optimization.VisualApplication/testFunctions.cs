@@ -1,4 +1,4 @@
-﻿namespace MoptDemo
+﻿namespace Optimization.VisualApplication
 {
     using OptimizationMethods;
     internal class TestFunctions

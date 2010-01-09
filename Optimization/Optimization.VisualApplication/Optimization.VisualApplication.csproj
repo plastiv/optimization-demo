@@ -35,7 +35,7 @@
   <ItemGroup>
     <Reference Include="DynamicDataDisplay, Version=0.3.4703.0, Culture=neutral, PublicKeyToken=5b7d744a7263923f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\DynamicDataDisplay.dll</HintPath>
+      <HintPath>..\Lib\DynamicDataDisplay.dll</HintPath>
     </Reference>
     <Reference Include="OptimizationMethods, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ff2a95caeeac13c8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

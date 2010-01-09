@@ -1,7 +1,7 @@
 ﻿
-namespace OptimizationMethods.ConditionalExtremum
+namespace Optimization.Methods.ConditionalExtremum
 {
-    using OptimizationMethods.ZerothOrder;
+    using Optimization.Methods.ZerothOrder;
     using System.Diagnostics;
 
     class Barrier

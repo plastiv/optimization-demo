@@ -8,8 +8,8 @@
     <ProjectGuid>{F92671CD-B207-4266-86CB-22B222642663}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OptimizationMethods</RootNamespace>
-    <AssemblyName>OptimizationMethods</AssemblyName>
+    <RootNamespace>Optimization.Methods</RootNamespace>
+    <AssemblyName>Optimization.Methods</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
@@ -23,7 +23,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\OptimizationMethods.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\Optimization.Methods.xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

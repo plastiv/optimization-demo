@@ -5,9 +5,9 @@
 // <author>Sergii Pechenizkyi</author>
 //-----------------------------------------------------------------------
 
-namespace OptimizationMethods
+namespace Optimization.Methods
 {
-    using OptimizationMethods.ConditionalExtremum;
+    using Optimization.Methods.ConditionalExtremum;
 
     /// <summary>
     /// Нахождение безусловного минимума функции многих переменных

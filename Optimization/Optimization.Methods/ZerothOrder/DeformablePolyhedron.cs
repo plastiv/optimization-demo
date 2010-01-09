@@ -5,10 +5,10 @@
 // <author>Sergii Pechenizkyi</author>
 //-----------------------------------------------------------------------
 
-namespace OptimizationMethods.ZerothOrder
+namespace Optimization.Methods.ZerothOrder
 {
     using System.Diagnostics;
-    using OptimizationMethods;
+    using Optimization.Methods;
 
     /// <summary>
     /// Нахождение безусловного минимума функции многих переменных методом деформируемого многогранника

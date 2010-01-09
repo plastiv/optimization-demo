@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------
 
 /// TODO: метод расходится на некоторых функциях. проверить унимодальные ли это функции?
-namespace OptimizationMethods.ZerothOrder
+namespace Optimization.Methods.ZerothOrder
 {
     using System.Diagnostics;
 

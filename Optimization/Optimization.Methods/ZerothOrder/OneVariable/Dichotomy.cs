@@ -5,7 +5,7 @@
 // <author>Sergii Pechenizkyi</author>
 //-----------------------------------------------------------------------
 
-namespace OptimizationMethods.ZerothOrder.OneVariable
+namespace Optimization.Methods.ZerothOrder.OneVariable
 {
     /// <summary>
     /// Оптимизация унимодальной функции одной переменной методом дихотомии (последовательное деление на две части)

@@ -1,9 +1,17 @@
-﻿
+﻿//-----------------------------------------------------------------------
+// <copyright file="ComboPenalty.cs" company="Home Corporation">
+//     Copyright (c) Home Corporation 2009. All rights reserved.
+// </copyright>
+// <author>Sergii Pechenizkyi</author>
+//-----------------------------------------------------------------------
+
 namespace OptimizationMethods.ConditionalExtremum
 {
-    using OptimizationMethods.ZerothOrder;
     using System.Diagnostics;
 
+    /// <summary>
+    /// Нахождение условного минимума функции многих переменных методом комбинирования штрафных и барьерных функций
+    /// </summary>
     public class ComboPenalty
     {
         #region Public Fields
@@ -11,19 +19,26 @@ namespace OptimizationMethods.ConditionalExtremum
         #endregion
 
         #region Private Fields
+        /// <summary>
+        /// Парметры метода
+        /// </summary>
         private MethodParams param;
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComboPenalty"/> class.
+        /// </summary>
+        /// <param name="inputParam">The input param.</param>
         public ComboPenalty(MethodParams inputParam)
         {
             Debug.Assert(inputParam.Func != null, "Function is unexepectedly not create (null)");
-            Debug.Assert(inputParam.incPenalty > 1, "InputParam.incrementPenalty is unexepectedly less or equal 1");
+            Debug.Assert(inputParam.IncPenalty > 1, "InputParam.incrementPenalty is unexepectedly less or equal 1");
             Debug.Assert(inputParam.Penalty > 0, "Penalty is unexepectedly less or equal 0");
             Debug.Assert(inputParam.QuantityOfEqualities >= 0, "QuantityOfEqualities is unexepectedly less 0");
             Debug.Assert(inputParam.QuantityOfInequalities >= 0, "QuantityOfInequalities is unexepectedly less 0");
 
-            param = inputParam;
+            this.param = inputParam;
         }
         #endregion
 
@@ -36,47 +51,26 @@ namespace OptimizationMethods.ConditionalExtremum
         /// Gets the minimum.
         /// </summary>
         /// <param name="startPoint">The start point.</param>
-        /// <param name="precision">Малое число е > 0 для остановки алгоритма</param>
-        /// <returns></returns>
+        /// <param name="precision">Малое число е &gt; 0 для остановки алгоритма</param>
+        /// <returns>Условный минимум функции.</returns>
         public double[] GetMinimum(double[] startPoint, double precision)
         {
             Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
 
             // Шаг 2. Составить вспомогательную функцию
-            ManyVariable AuxiliaryFunction = delegate(double[] inputx)
+            ManyVariable auxiliaryFunction = delegate(double[] inputx)
             {
-                return param.Func(inputx) + PenaltyFunction(inputx, param.Penalty);
+                return this.param.Func(inputx) + this.PenaltyFunction(inputx, this.param.Penalty);
             };
 
-            Hooke_Jevees.MethodParams hjparam = new Hooke_Jevees.MethodParams();
-            hjparam.AccelerateCoefficient = 1.5;
-            hjparam.CoefficientReduction = 4;
-            hjparam.Dimension = 2;
-            hjparam.Step = new double[hjparam.Dimension];
-            hjparam.Step[0] = 0.75;
-            hjparam.Step[1] = 0.75;
-            Hooke_Jevees hjmethod = new Hooke_Jevees(AuxiliaryFunction, hjparam);
+            double[] xopt = Minimum.HookeJevees(this.param.Func, this.param.Dimension, startPoint); // искомая точка точка
 
-            bool notFound = true;
-
-            double[] xopt = startPoint; // искомая точка
-
-            while (notFound)
+            while (System.Math.Abs(this.PenaltyFunction(xopt, this.param.Penalty)) > precision)
             {
-                // Шаг 3. Найти точку х*{гк} безусловного минимума функции flx9rk\ no x
-                xopt = hjmethod.GetMinimum(xopt, precision);
-                // Шаг 4. Проверить условие окончания:
-                if (PenaltyFunction(xopt, param.Penalty) > precision)
-                {
-                    //  a) положить: r*+1 = Сгк, хк+х = х*(гк\ к = к + \ и перейти к шагу 2.
-                    param.Penalty /= param.incPenalty;
-                }
-                else
-                {
-                    //  b) процесс поиска закончить
-                    notFound = false;
-                }
-            } 
+                this.Condition(xopt);
+                xopt = Minimum.HookeJevees(auxiliaryFunction, this.param.Dimension, xopt);
+                this.param.Penalty = this.param.Penalty / this.param.IncPenalty;
+            }
 
             return xopt;
         }
@@ -84,19 +78,42 @@ namespace OptimizationMethods.ConditionalExtremum
 
         #region Private Methods
         /// <summary>
+        /// Conditions the specified x.
+        /// </summary>
+        /// <param name="x">Переменная x.</param>
+        /// <returns>Правду, если выполняются условия gi(x) less zero.</returns>
+        private bool Condition(double[] x)
+        {
+            if (this.param.QuantityOfInequalities != 0)
+            {
+                for (int i = 0; i < this.param.QuantityOfInequalities; i++)
+                {
+                    if (this.param.Inequalities[i](x) > 0)
+                    {
+                        // TODO: bad style
+                        System.Console.WriteLine("Greater then zero");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Штрафная функция
         /// </summary>
-        /// <param name="x">The x.</param>
-        /// <returns></returns>
+        /// <param name="x">Переменная x.</param>
+        /// <returns>Значение штрафной функции.</returns>
         private double QuadraticPenalty(double[] x)
         {
-            if (param.QuantityOfEqualities != 0)
+            if (this.param.QuantityOfEqualities != 0)
             {
                 double solution = 0;
 
-                for (int i = 0; i < param.QuantityOfEqualities; i++)
+                for (int i = 0; i < this.param.QuantityOfEqualities; i++)
                 {
-                    solution += param.Equalities[i](x) * param.Equalities[i](x);
+                    solution = solution + (this.param.Equalities[i](x) * this.param.Equalities[i](x));
                 }
 
                 return solution;
@@ -110,17 +127,17 @@ namespace OptimizationMethods.ConditionalExtremum
         /// <summary>
         /// Барьерная функция
         /// </summary>
-        /// <param name="x">The x.</param>
-        /// <returns></returns>
+        /// <param name="x">Переменная x.</param>
+        /// <returns>Значение барьерной функции.</returns>
         private double SquareShear(double[] x)
         {
-            if (param.QuantityOfInequalities != 0)
+            if (this.param.QuantityOfInequalities != 0)
             {
                 double solution = 0;
 
-                for (int i = 0; i < param.QuantityOfInequalities; i++)
+                for (int i = 0; i < this.param.QuantityOfInequalities; i++)
                 {
-                    solution += 1 / param.Inequalities[i](x);
+                    solution = solution + (1 / this.param.Inequalities[i](x));
                 }
 
                 return solution;
@@ -131,13 +148,22 @@ namespace OptimizationMethods.ConditionalExtremum
             }
         }
 
+        /// <summary>
+        /// Penalties the function.
+        /// </summary>
+        /// <param name="x">Переменная x.</param>
+        /// <param name="r">Параметр штрафа.</param>
+        /// <returns>Значение общей штрафной функции.</returns>
         private double PenaltyFunction(double[] x, double r)
         {
-            return (1 / 2 * r) * QuadraticPenalty(x) - r * SquareShear(x);
+            return (this.QuadraticPenalty(x) / (2 * r)) - (r * this.SquareShear(x));
         }
         #endregion
 
         #region Structs
+        /// <summary>
+        /// Парметры метода
+        /// </summary>
         public struct MethodParams
         {
             /// <summary>
@@ -146,7 +172,7 @@ namespace OptimizationMethods.ConditionalExtremum
             public int QuantityOfInequalities;
 
             /// <summary>
-            /// Неравенства
+            /// Ссылки на неравенства
             /// </summary>
             public ManyVariable[] Inequalities;
 
@@ -156,12 +182,12 @@ namespace OptimizationMethods.ConditionalExtremum
             public int QuantityOfEqualities;
 
             /// <summary>
-            /// Равенства
+            /// Ссылки на равенства
             /// </summary>
             public ManyVariable[] Equalities;
 
             /// <summary>
-            /// функция
+            /// Ссылка на функцию
             /// </summary>
             public ManyVariable Func;
 
@@ -173,7 +199,12 @@ namespace OptimizationMethods.ConditionalExtremum
             /// <summary>
             /// Число С > 1 для увеличения параметра
             /// </summary>
-            public double incPenalty;
+            public double IncPenalty;
+
+            /// <summary>
+            /// Количество переменных
+            /// </summary>
+            public int Dimension;
         }
         #endregion
     }

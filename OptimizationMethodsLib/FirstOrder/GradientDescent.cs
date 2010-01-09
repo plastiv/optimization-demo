@@ -7,60 +7,29 @@
 
 namespace OptimizationMethods.FirstOrder
 {
-    /// <summary>
-    /// Ссылка на функциональную зависимость f(x1,х2,...,хn).
-    /// </summary>
-    /// <param name="x">Вектор значений переменных x1,х2,...,хn.</param>
-    /// <returns>Значение функции у=f(x1,х2,...,хn).</returns>
-    public delegate double GetManyVariableFunctionValue(double[] x);
-
-    /// <summary>
-    /// Ссылка на функциональную зависимость df/dxi, где xi = x1,х2,...,хn.
-    /// </summary>
-    /// <param name="x">Вектор значений переменных x1,х2,...,хn.</param>
-    /// <returns>Значение градиента у=df/dxi, где xi = x1,х2,...,хn.</returns>
-    public delegate double[] GetGradientOfFunction(double[] x);
+    using System.Diagnostics;
+    using OptimizationMethods;
 
     /// <summary>
     /// Метод градиентного спуска с постоянным шагом
     /// </summary>
-    public class GradientDescent
+    internal class GradientDescent
     {
         #region Private Fields
         /// <summary>
-        /// Количество переменных в минимизируемом уравнении.
-        /// </summary>
-        private readonly int dimension;
-
-        /// <summary>
-        /// Малое положительное число, ограничивающее евклидову норму градиента. 
-        /// </summary>
-        private readonly double epsilon1;
-
-        /// <summary>
-        /// Малое положительное число, ограничивающее разность значений функции в текущей и предыдущей точке. 
-        /// </summary>
-        private readonly double epsilon2;
-
-        /// <summary>
-        /// Максимальное число итераций для метода.
-        /// </summary>
-        private readonly int maxIteration;
-
-        /// <summary>
         /// Искомая функция.
         /// </summary>
-        private readonly GetManyVariableFunctionValue searchFunc;
+        private readonly ManyVariable searchFunc;
 
         /// <summary>
         /// Первая производная искомой функции.
         /// </summary>
-        private readonly GetGradientOfFunction searchGradient;
+        private readonly Gradient SearchGradient;
 
         /// <summary>
-        /// Значение градиента в текущей точке.
+        /// Параметры метода.
         /// </summary>
-        private double[] gradientValue;
+        private readonly MethodParams Param;
 
         /// <summary>
         /// Величина шага deltax.
@@ -72,16 +41,48 @@ namespace OptimizationMethods.FirstOrder
         /// <summary>
         /// Initializes a new instance of the <see cref="GradientDescent"/> class.
         /// </summary>
+        /// <param name="searchFunc">The search func.</param>
+        /// <param name="searchGradient">The search gradient.</param>
         /// <param name="initParam">The initial parameters.</param>
-        public GradientDescent(MethodParams initParam)
+        public GradientDescent(ManyVariable searchFunc, Gradient searchGradient, MethodParams initParam)
         {
-            this.maxIteration = initParam.MaxIteration;
-            this.dimension = initParam.Dimension;
-            this.epsilon1 = initParam.Epsilon1;
-            this.epsilon2 = initParam.Epsilon2;
+            Debug.Assert(initParam.Epsilon1 > 0, "Epsilon1 is unexepectedly less or equal zero");
+            Debug.Assert(initParam.Epsilon2 > 0, "Epsilon2 is unexepectedly less or equal zero");
+            Debug.Assert(initParam.IterationCount > 0, "MaxIteration is unexepectedly less or equal zero");
+            Debug.Assert(initParam.Step > 0, "Step is unexepectedly less or equal zero");
+            Debug.Assert(initParam.Dimension > 1, "Dimension is unexepectedly less or equal 1");
+            this.Param = initParam;
             this.step = initParam.Step;
-            this.searchFunc = initParam.SearchFunc;
-            this.searchGradient = initParam.SearchGradient;
+            this.searchFunc = searchFunc;
+            this.SearchGradient = searchGradient;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GradientDescent"/> class.
+        /// </summary>
+        /// <param name="searchFunc">The search func.</param>
+        /// <param name="initParam">The initial parameters.</param>
+        public GradientDescent(ManyVariable searchFunc, MethodParams initParam)
+            : this(searchFunc, null, initParam)
+        {
+            this.SearchGradient = this.GetNumericalGradient;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GradientDescent"/> class.
+        /// </summary>
+        /// <param name="searchFunc">The search func.</param>
+        /// <param name="funcDimension">The func dimension.</param>
+        public GradientDescent(ManyVariable searchFunc, int funcDimension)
+        {
+            this.Param.Dimension = funcDimension;
+            this.Param.Epsilon1 = 0.1;
+            this.Param.Epsilon2 = 0.15;
+            this.Param.IterationCount = 25;
+            this.Param.Step = 2;
+            this.step = this.Param.Step;
+            this.searchFunc = searchFunc;
+            this.SearchGradient = this.GetNumericalGradient;
         }
         #endregion
 
@@ -91,37 +92,179 @@ namespace OptimizationMethods.FirstOrder
         /// </summary>
         /// <param name="startPoint">Начальная точка.</param>
         /// <returns>Вектор значений х, при котором функция достигает минимума.</returns>
-        public double[] GetMinimum(double[] startPoint)
+        internal double[] GetMinimum(double[] startPoint)
         {
-            int count = 0;
-            double[] currPoint = startPoint;
-            double[] prevPoint = startPoint;
-            double[] prevPrevPoint = startPoint;
-
-            this.gradientValue = this.searchGradient(startPoint);
-
-            while (count < this.maxIteration && this.GetEuclideanNorm(this.gradientValue) > this.epsilon1)
+            double[] currPoint = new double[this.Param.Dimension];
+            for (int i = 0; i < this.Param.Dimension; i++)
             {
-                count++;
-                prevPrevPoint = prevPoint;
-                prevPoint = currPoint;
-                currPoint = this.GetNextPoint(prevPoint);
-                if (this.GetEuclideanNorm(currPoint, prevPoint) < this.epsilon2
-                    && this.searchFunc(currPoint) - this.searchFunc(prevPoint) < this.epsilon2)
+                currPoint[i] = startPoint[i];
+            }
+
+            double[] prevPoint = new double[this.Param.Dimension];
+            double[] prevPrevPoint = new double[this.Param.Dimension];
+
+            int iteration = 0;
+
+            while (iteration < this.Param.IterationCount && this.GetEuclideanNorm(this.SearchGradient(currPoint)) > this.Param.Epsilon1)
+            {
+                for (int i = 0; i < this.Param.Dimension; i++)
                 {
-                    if (this.GetEuclideanNorm(prevPoint, prevPrevPoint) < this.epsilon2
-                        && this.searchFunc(prevPoint) - this.searchFunc(prevPrevPoint) < this.epsilon2)
+                    prevPrevPoint[i] = prevPoint[i];
+                    prevPoint[i] = currPoint[i];
+                }
+
+                currPoint = this.GetNextPoint(prevPoint);
+
+                if (this.IsCondition(currPoint, prevPoint))
+                {
+                    if (this.IsCondition(prevPoint, prevPrevPoint))
                     {
                         return currPoint;
                     }
                 }
+
+                iteration++;
             }
 
             return currPoint;
         }
+
+        /// <summary>
+        /// Нахождение безусловного локального минимума функции многих переменных (с сохранением промежуточных пошаговых результатов).
+        /// </summary>
+        /// <param name="startPoint">Начальная точка.</param>
+        /// <returns>Матрицу значений х, где первый мтератог - номер шага, второй итератор - указывает переменную, при котором функция достигает минимума.</returns>
+        internal double[][] GetExtendedMinimum(double[] startPoint)
+        {
+            double[][] result = new double[this.Param.IterationCount][];
+            for (int i = 0; i < this.Param.IterationCount; i++)
+            {
+                result[i] = new double[this.Param.Dimension];
+            }
+
+            double[] currPoint = new double[this.Param.Dimension];
+            for (int i = 0; i < this.Param.Dimension; i++)
+            {
+                currPoint[i] = startPoint[i];
+            }
+
+            double[] prevPoint = new double[this.Param.Dimension];
+            double[] prevPrevPoint = new double[this.Param.Dimension];
+
+            int iteration = 0;
+
+            for (int i = 0; i < this.Param.Dimension; i++)
+            {
+                result[iteration][i] = currPoint[i];
+            }
+
+            while (iteration < this.Param.IterationCount && this.GetEuclideanNorm(this.SearchGradient(currPoint)) > this.Param.Epsilon1)
+            {
+                for (int i = 0; i < this.Param.Dimension; i++)
+                {
+                    prevPrevPoint[i] = prevPoint[i];
+                    prevPoint[i] = currPoint[i];
+                }
+
+                for (int i = 0; i < this.Param.Dimension; i++)
+                {
+                    result[iteration][i] = currPoint[i];
+                }
+
+                currPoint = this.GetNextPoint(prevPoint);
+
+                if (this.IsCondition(currPoint, prevPoint))
+                {
+                    if (this.IsCondition(prevPoint, prevPrevPoint))
+                    {
+                        double[][] newResult = new double[iteration + 1][];
+                        for (int i = 0; i < iteration; i++)
+                        {
+                            newResult[i] = new double[this.Param.Dimension];
+                            for (int j = 0; j < this.Param.Dimension; j++)
+                            {
+                                newResult[i][j] = result[i][j];
+                            }
+                        }
+
+                        newResult[iteration] = new double[this.Param.Dimension];
+                        for (int j = 0; j < this.Param.Dimension; j++)
+                        {
+                            newResult[iteration][j] = currPoint[j];
+                        }
+
+                        return newResult;
+                    }
+                }
+
+                iteration++;
+            }
+
+            return result;
+        }
         #endregion
 
         #region Private Methods
+        /// <summary>
+        /// Determines whether the specified point1 is condition.
+        /// </summary>
+        /// <param name="point1">The point1.</param>
+        /// <param name="point2">The point2.</param>
+        /// <returns>
+        /// <c>true</c> if the specified point1 is condition; otherwise, <c>false</c>.
+        /// </returns>
+        private bool IsCondition(double[] point1, double[] point2)
+        {
+            double[] difference = new double[this.Param.Dimension];
+            for (int i = 0; i < this.Param.Dimension; i++)
+            {
+                difference[i] = point1[i] - point2[i];
+            }
+
+            if (this.GetEuclideanNorm(difference) < this.Param.Epsilon2)
+            {
+                if (System.Math.Abs(this.searchFunc(point1) - this.searchFunc(point2)) < this.Param.Epsilon2)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets the numerical gradient.
+        /// </summary>
+        /// <param name="x">Точка x для ктр рассчитывается градиент.</param>
+        /// <returns>Градиент функции.</returns>
+        private double[] GetNumericalGradient(double[] x)
+        {
+            const double DeltaX = 0.00001;
+            double[] solution = new double[this.Param.Dimension];
+            for (int i = 0; i < this.Param.Dimension; i++)
+            {
+                double[] x1 = new double[this.Param.Dimension];
+                double[] x2 = new double[this.Param.Dimension];
+                for (int j = 0; j < this.Param.Dimension; j++)
+                {
+                    x1[j] = x[j];
+                    x2[j] = x[j];
+                }
+
+                x1[i] -= DeltaX;
+                x2[i] += DeltaX;
+                solution[i] = (this.searchFunc(x2) - this.searchFunc(x1)) / (2 * DeltaX);
+            }
+
+            return solution;
+        }
+
         /// <summary>
         /// Получить значения х для следующей точки.
         /// </summary>
@@ -129,42 +272,25 @@ namespace OptimizationMethods.FirstOrder
         /// <returns>Значения х.</returns>
         private double[] GetNextPoint(double[] previousPoint)
         {
-            double[] refPoint = new double[this.dimension];
-            this.gradientValue = this.searchGradient(previousPoint);
+            double[] gradientValue = this.SearchGradient(previousPoint);
+            double[] nextPoint = new double[this.Param.Dimension];
 
-            while (true)
+            for (int i = 0; i < this.Param.Dimension; i++)
             {
-                for (int i = 0; i < this.dimension; i++)
-                {
-                    refPoint[i] = previousPoint[i] - (this.step * this.gradientValue[i]);
-                }
+                nextPoint[i] = previousPoint[i] - (this.step * gradientValue[i]);
+            }
 
-                if (this.searchFunc(refPoint) - this.searchFunc(previousPoint) < 0)
-                {
-                    return refPoint;
-                }
-
+            while (this.searchFunc(nextPoint) - this.searchFunc(previousPoint) > 0)
+            {
                 this.step /= 2;
-            }
-        }
 
-        /// <summary>
-        /// Получить евклидову норму разности двух векторов.
-        /// </summary>
-        /// <param name="vector1">The vector1.</param>
-        /// <param name="vector2">The vector2.</param>
-        /// <returns>Евклидова норма вектора.</returns>
-        private double GetEuclideanNorm(double[] vector1, double[] vector2)
-        {
-            double eps = 0;
-
-            for (int i = 0; i < this.dimension; i++)
-            {
-                eps += System.Math.Abs(vector1[i] - vector2[i]) * System.Math.Abs(vector1[i] - vector2[i]);
+                for (int i = 0; i < this.Param.Dimension; i++)
+                {
+                    nextPoint[i] = previousPoint[i] - (this.step * gradientValue[i]);
+                }
             }
 
-            eps = System.Math.Sqrt(eps);
-            return eps;
+            return nextPoint;
         }
 
         /// <summary>
@@ -176,7 +302,7 @@ namespace OptimizationMethods.FirstOrder
         {
             double eps = 0;
 
-            for (int i = 0; i < this.dimension; i++)
+            for (int i = 0; i < this.Param.Dimension; i++)
             {
                 eps += vector[i] * vector[i];
             }
@@ -215,17 +341,7 @@ namespace OptimizationMethods.FirstOrder
             /// <summary>
             /// Максимальное число итераций для метода.
             /// </summary>
-            public int MaxIteration;
-
-            /// <summary>
-            /// Искомая функция.
-            /// </summary>
-            public GetManyVariableFunctionValue SearchFunc;
-
-            /// <summary>
-            /// Первая производная искомой функции.
-            /// </summary>
-            public GetGradientOfFunction SearchGradient;
+            public int IterationCount;
         }
         #endregion
     }

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="Hooke-Jevees.cs" company="Home Corporation">
+// <copyright file="Hooke-JeveesExtended.cs" company="Home Corporation">
 //     Copyright (c) Home Corporation 2009. All rights reserved.
 // </copyright>
 // <author>Sergii Pechenizkyi</author>
@@ -14,7 +14,7 @@ namespace OptimizationMethods.ZerothOrder
     /// <summary>
     /// Нахождение безусловного минимума функции многих переменных методом Хука-Дживса
     /// </summary>
-    internal class Hooke_Jevees
+    internal class Hooke_JeveesExtended
     {
         #region Private Fields
         /// <summary>
@@ -39,7 +39,7 @@ namespace OptimizationMethods.ZerothOrder
         /// </summary>
         /// <param name="inputFunc">The input function.</param>
         /// <param name="inputParams">The input method parameters.</param>
-        public Hooke_Jevees(ManyVariable inputFunc, MethodParams inputParams)
+        public Hooke_JeveesExtended(ManyVariable inputFunc, MethodParams inputParams)
         {
             Debug.Assert(inputParams.AccelerateCoefficient > 0, "Accelerate coefficient lyamda is unexepectedly less or equal zero");
             Debug.Assert(inputParams.CoefficientReduction > 1, "Coefficient reduction alfa is unexepectedly less or equal 1");
@@ -56,7 +56,7 @@ namespace OptimizationMethods.ZerothOrder
         /// </summary>
         /// <param name="inputFunc">The input function.</param>
         /// <param name="funcDimension">Количество переменных.</param>
-        public Hooke_Jevees(ManyVariable inputFunc, int funcDimension)
+        public Hooke_JeveesExtended(ManyVariable inputFunc, int funcDimension)
         {
             this.func = inputFunc;
             this.param.AccelerateCoefficient = 1.5;
@@ -77,80 +77,7 @@ namespace OptimizationMethods.ZerothOrder
         /// <param name="startPoint">The start point.</param>
         /// <param name="precision">The precision.</param>
         /// <returns>Вектор значений х, при котором функция достигает минимума.</returns>
-        internal double[] GetMinimum(double[] startPoint, double precision)
-        {
-            // Шаг 1. Задать начальную точку л:0
-            // число е>0 для остановки алгоритма
-            Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
-
-            double[] newBasis = startPoint;
-            double[] oldBasis = startPoint;
-
-            while (true)
-            {
-                // Шаг 2. Осуществить исследующий поиск по выбранному координатному направлению (i)
-                newBasis = this.ExploratarySearch(newBasis);
-
-                // Проверить успешность исследующего поиска:
-                if (this.func(newBasis) < this.func(oldBasis))
-                {
-                    // перейти к шагу 4;
-
-                    // Сформируем х[k]
-                    double[] oldOldBasis = new double[this.param.Dimension];
-                    for (int i = 0; i < this.param.Dimension; i++)
-                    {
-                        oldOldBasis[i] = oldBasis[i];
-                    }
-
-                    // Шаг 4. Провести поиск по образцу. Положить x[k + 1] = yn+l,
-                    oldBasis = newBasis;
-
-                    // y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k]);
-                    newBasis = this.PatternSearch(oldOldBasis, oldBasis);
-
-                    // перейти к шагу 2.
-                    continue;
-                }
-                else
-                {
-                    // перейти к шагу 5.
-
-                    // Шаг 5. Проверить условие окончания:
-                    if (!this.AllStepsLessPrecision(precision))
-                    {
-                        for (int index = 0; index < this.param.Dimension; index++)
-                        {
-                            // Для значений шагов, больших точности
-                            if (this.step[index] > precision)
-                            {
-                                // Уменьшить величину шага
-                                this.step[index] /= this.param.CoefficientReduction;
-                            }
-                        }
-
-                        newBasis = oldBasis;
-
-                        // перейти к шагу 2.
-                        continue;
-                    }
-                    else
-                    {
-                        // Значение всех шагов меньше точности
-                        // Поиск закончен
-                        return oldBasis;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the minimum.
-        /// </summary>
-        /// <param name="startPoint">The start point.</param>
-        /// <param name="precision">The precision.</param>
-        /// <returns>Вектор значений х, при котором функция достигает минимума.</returns>
-        internal double[][] GetMinimumExtended(double[] startPoint, double precision)
+        internal double[][] GetMinimum(double[] startPoint, double precision)
         {
             // Шаг 1. Задать начальную точку л:0
             // число е>0 для остановки алгоритма

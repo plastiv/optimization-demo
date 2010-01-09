@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using OptimizationMethods.ZerothOrder.OneVariable;
+﻿/*
 
 
 namespace OptimizationMethods.ConditionalExtremum
 {
+    using OptimizationMethods.ZerothOrder.OneVariable;
+
     public class PenaltyOneDimension
     {
         private readonly OneVariableFunction[] quadraticPens;
@@ -133,3 +132,4 @@ namespace OptimizationMethods.ConditionalExtremum
         }
     }
 }
+*/

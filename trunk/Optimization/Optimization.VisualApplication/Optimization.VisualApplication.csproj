@@ -8,8 +8,8 @@
     <ProjectGuid>{8B32F5AE-E0EF-4115-802F-4D6C5A4E901F}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MoptDemo</RootNamespace>
-    <AssemblyName>MoptDemo</AssemblyName>
+    <RootNamespace>Optimization.VisualApplication</RootNamespace>
+    <AssemblyName>Optimization.VisualApplication</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

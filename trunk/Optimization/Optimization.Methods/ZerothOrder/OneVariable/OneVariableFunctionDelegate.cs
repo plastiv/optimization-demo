@@ -5,7 +5,7 @@
 // <author>Sergii Pechenizkyi</author>
 //-----------------------------------------------------------------------
 
-namespace OptimizationMethods.ZerothOrder.OneVariable
+namespace Optimization.Methods.ZerothOrder.OneVariable
 {
     /// <summary>
     /// Ссылка на функциональную зависимость f(x).

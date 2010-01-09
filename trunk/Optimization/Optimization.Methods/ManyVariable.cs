@@ -5,10 +5,10 @@
 // <author>Sergii Pechenizkyi</author>
 //-----------------------------------------------------------------------
 
-namespace OptimizationMethods
+namespace Optimization.Methods
 {
-    using OptimizationMethods.FirstOrder;
-    using OptimizationMethods.ZerothOrder;
+    using Optimization.Methods.FirstOrder;
+    using Optimization.Methods.ZerothOrder;
 
     /// <summary>
     /// Ссылка на функциональную зависимость f(x1,х2,...,хn).

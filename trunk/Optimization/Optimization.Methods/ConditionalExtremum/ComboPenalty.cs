@@ -5,7 +5,7 @@
 // <author>Sergii Pechenizkyi</author>
 //-----------------------------------------------------------------------
 
-namespace OptimizationMethods.ConditionalExtremum
+namespace Optimization.Methods.ConditionalExtremum
 {
     using System.Diagnostics;
 

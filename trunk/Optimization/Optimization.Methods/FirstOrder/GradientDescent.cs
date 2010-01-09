@@ -5,10 +5,10 @@
 // <author>Sergii Pechenizkyi</author>
 //-----------------------------------------------------------------------
 
-namespace OptimizationMethods.FirstOrder
+namespace Optimization.Methods.FirstOrder
 {
     using System.Diagnostics;
-    using OptimizationMethods;
+    using Optimization.Methods;
 
     /// <summary>
     /// Метод градиентного спуска с постоянным шагом

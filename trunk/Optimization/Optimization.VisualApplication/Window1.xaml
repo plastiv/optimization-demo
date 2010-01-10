@@ -6,6 +6,12 @@
 		Icon="{x:Static d3:D3IconHelper.DynamicDataDisplayWhiteIcon}" WindowState="Maximized">
   <DockPanel Name="myGrid">
     <WrapPanel DockPanel.Dock="Top">
+      <Menu Name="mainMenu" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="DarkGray">
+        <MenuItem Header="Настройки" Click="MenuItemIsoline_Click" ToolTip="Установки разрешения изолиний."/>
+        <MenuItem Header="О программе"/>        
+      </Menu>
+    </WrapPanel>
+    <WrapPanel DockPanel.Dock="Top">
       <ComboBox Name="cmbFunctions" SelectionChanged="cmbFunctions_SelectionChanged" SelectedIndex="1"></ComboBox>
       <ComboBox Name="cmbMethods" SelectedIndex="1"></ComboBox>
       <TextBox Name="txtX1">4</TextBox>

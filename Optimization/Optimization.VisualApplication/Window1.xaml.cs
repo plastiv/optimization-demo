@@ -102,5 +102,12 @@ namespace Optimization.VisualApplication
             }
             
         }
+
+        private void MenuItemIsoline_Click(object sender, RoutedEventArgs e)
+        {
+
+            MessageBox.Show("Menu item clicked");
+
+        } 
     }
 }

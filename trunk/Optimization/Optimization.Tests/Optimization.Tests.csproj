@@ -39,9 +39,11 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestUniformMethod.cs" />
+    <Compile Include="TestOneVariableFunction4.cs" />
+    <Compile Include="TestOneVariableFunction3.cs" />
+    <Compile Include="TestOneVariableFunction2.cs" />
+    <Compile Include="TestOneVariableFunction1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestFibonacciMethod.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

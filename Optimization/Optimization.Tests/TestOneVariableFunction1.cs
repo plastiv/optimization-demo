@@ -3,7 +3,6 @@ namespace Optimization.Tests
 {
     using NUnit.Framework;
     using Optimization.Methods.ZerothOrder.OneVariable;
-    using System;
 
     [TestFixture]
     class TestOneVariableFunction1

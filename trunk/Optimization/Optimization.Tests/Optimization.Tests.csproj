@@ -39,10 +39,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestOneVariableFunction4.cs" />
-    <Compile Include="TestOneVariableFunction3.cs" />
-    <Compile Include="TestOneVariableFunction2.cs" />
-    <Compile Include="TestOneVariableFunction1.cs" />
+    <Compile Include="TestOneVariableFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

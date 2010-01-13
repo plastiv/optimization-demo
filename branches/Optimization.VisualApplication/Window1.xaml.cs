@@ -61,6 +61,8 @@ namespace Optimization.VisualApplication
             ManyVariableFunctionTask selectedTask = (ManyVariableFunctionTask)cmbFunctions.SelectedItem;
             txtFunction.Text = selectedTask.expression;
             lineSource = new LineSource(selectedTask.function);
+            txtX1.Text = selectedTask.startPoint[0].ToString();
+            txtX2.Text = selectedTask.startPoint[1].ToString();
             WarpedDataSource2D<double> dataSource = DataSource.GetDataSource(selectedTask.function, minValue, maxValue, pointCount);
             isolineGraph.DataSource = dataSource;
             trackingGraph.DataSource = dataSource;

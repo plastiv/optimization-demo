@@ -77,14 +77,7 @@ namespace Optimization.VisualApplication
             vwpolyline.Points = lineSource.GetPointCollection(cmbMethods.SelectedItem, new double[2] { double.Parse(txtX1.Text), double.Parse(txtX2.Text) });
             solPointCount = lineSource.PointsCount;
             solPointIndex = solPointCount;
-            var marker = new CircleElementPointMarker
-            {
-                Size = 10,
-                Brush = Brushes.Red,
-                Fill = Brushes.Orange
-            };
-            marker.ToolTipText = "Value is";
-            vwpolyline.ToolTip = marker;
+
             plotter.AddChild(vwpolyline);
         }
 

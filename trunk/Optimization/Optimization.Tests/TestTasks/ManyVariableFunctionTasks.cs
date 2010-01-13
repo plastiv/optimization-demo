@@ -9,6 +9,7 @@
         public int funcDimension;
         public double[] startPoint;
         public double[] exactSolution;
+        public string expression;
     }
 
     public class ManyVariableFunctionTask0 : ManyVariableFunctionTask
@@ -22,6 +23,7 @@
             this.startPoint = new double[] { 0, 0 };
             this.exactSolution = new double[] { 0.5, -1.25 };
             this.funcDimension = 2;
+            this.expression = "x[0] * x[0] * x[0] - x[0] * x[1] + x[1] * x[1] - 2 * x[0] + 3 * x[1] - 4";
         }
 
         public override string ToString()
@@ -41,6 +43,7 @@
             this.startPoint = new double[] { 0, 0 };
             this.exactSolution = new double[] { 1, 1 };
             this.funcDimension = 2;
+            this.expression = "x[1] - x[0] * x[0]) * (x[1] - x[0] * x[0]) + (1 - x[0]) * (1 - x[0]";
         }
 
         public override string ToString()
@@ -60,6 +63,7 @@
                     this.startPoint = new double[] { 0.5, 0 };
                     this.exactSolution = new double[] { 0, 1 };
             this.funcDimension = 2;
+            this.expression = "(x[0] + 1) * (x[0] + 1) + x[0] * x[0]) * (x[0] * x[0] + (x[1] - 1) * (x[1] - 1)";
         }
 
         public override string ToString()
@@ -80,6 +84,7 @@
                     this.startPoint = new double[] { 0, 3 };
                     this.exactSolution = new double[] { 0, 1 };
             this.funcDimension = 2;
+            this.expression = "x[1] * x[1] + x[0] * x[0] - 1) * (x[1] * x[1] + x[0] * x[0] - 1) + (x[0] + x[1] - 1) * (x[0] + x[1] - 1";
         }
 
         public override string ToString()
@@ -99,6 +104,7 @@
                     this.startPoint = new double[] { 0.1, 0.5 };
                     this.exactSolution = new double[] { 1, 1 };
             this.funcDimension = 2;
+            this.expression = "-x[0] * x[0] * Math.Exp(1 - x[0] * x[0] - 20.25 * (x[0] - x[1]) * (x[0] - x[1]))";
         }
 
         public override string ToString()
@@ -118,6 +124,7 @@
                     this.startPoint = new double[] { 0, 1 };
                     this.exactSolution = new double[] { 1, 1 };
             this.funcDimension = 2;
+            this.expression = "-x[0] * x[1] * Math.Exp(-(x[0] + x[1]))";
         }
 
         public override string ToString()
@@ -137,6 +144,7 @@
                     this.startPoint = new double[] { 8, 9 };
                     this.exactSolution = new double[] { 5, 6 };
             this.funcDimension = 2;
+            expression = "4 * (x[0] - 5) * (x[0] - 5) + (x[1] - 6) * (x[1] - 6)";
         }
 
         public override string ToString()
@@ -156,6 +164,7 @@
                     this.startPoint = new double[] { 0, 0 };
                     this.exactSolution = new double[] { 3, 2 };
             this.funcDimension = 2;
+            this.expression = "(x[0] * x[0] + x[1] - 11) * (x[0] * x[0] + x[1] - 11) + (x[0] + x[1] * x[1] - 7) * (x[0] + x[1] * x[1] - 7)";
         }
 
         public override string ToString()
@@ -175,6 +184,7 @@
                     this.startPoint = new double[] { 0.5, 1 };
                     this.exactSolution = new double[] { 0, 0 };
             this.funcDimension = 2;
+            this.expression = "2 * x[0] * x[0] + x[0] * x[1] + x[1] * x[1]";
         }
 
         public override string ToString()
@@ -194,6 +204,7 @@
                     this.startPoint = new double[] { 0.5, 1 };
                     this.exactSolution = new double[] { 1, 1 };
             this.funcDimension = 2;
+            this.expression = "x[0] * x[0] * x[0] + x[1] * x[1] - 3 * x[0] - 2 * x[1] + 1";
         }
 
         public override string ToString()
@@ -214,6 +225,7 @@
             this.startPoint = new double[] { 0.5, 1 };
             this.exactSolution = new double[] { 1, 0 };
             this.funcDimension = 2;
+            this.expression = "x[0] * x[0] * x[0] * x[0] + x[1] * x[1] * x[1] * x[1] + 2 * x[0] * x[0] * x[1] * x[1] - 4 * x[0] + 3";
         }
 
         public override string ToString()

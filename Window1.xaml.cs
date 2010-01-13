@@ -5,6 +5,7 @@ using Microsoft.Research.DynamicDataDisplay.Common.Auxiliary;
 using Microsoft.Research.DynamicDataDisplay.DataSources.MultiDimensional;
 using Microsoft.Research.DynamicDataDisplay.PointMarkers;
 using Optimization.Tests.Tasks;
+using Microsoft.Research.DynamicDataDisplay.Charts;
 
 namespace Optimization.VisualApplication
 {
@@ -19,8 +20,10 @@ namespace Optimization.VisualApplication
 
         LineSource lineSource;
         ViewportPolyline vwpolyline;
+        WarpedDataSource2D<double> dataSource;
         int solPointIndex;
         int solPointCount;
+        IsolineTrackingGraph trackingGraph;
 
         public Window1()
         {
@@ -63,10 +66,10 @@ namespace Optimization.VisualApplication
             lineSource = new LineSource(selectedTask.function);
             txtX1.Text = selectedTask.startPoint[0].ToString();
             txtX2.Text = selectedTask.startPoint[1].ToString();
-            WarpedDataSource2D<double> dataSource = DataSource.GetDataSource(selectedTask.function, minValue, maxValue, pointCount);
+            dataSource = DataSource.GetDataSource(selectedTask.function, minValue, maxValue, pointCount);
             isolineGraph.DataSource = dataSource;
+            trackingGraph = new IsolineTrackingGraph(); // TODO: Lazy initialization.
             trackingGraph.DataSource = dataSource;
-
             Rect visible = dataSource.GetGridBounds();
             plotter.Viewport.Visible = visible;
         }
@@ -102,7 +105,18 @@ namespace Optimization.VisualApplication
                 vwpolyline.Points.RemoveAt(solPointIndex - 1);
                 solPointIndex--;
             }
+        }
 
+        private void chkTrackingGraph_Click(object sender, RoutedEventArgs e)
+        {
+            if (chkTrackingGraph.IsChecked == true)
+            {
+                plotter.AddChild(trackingGraph);
+            }
+            else
+            {
+                plotter.Children.Remove(trackingGraph);
+            }
         }
 
         private void MenuItemIsoline_Click(object sender, RoutedEventArgs e)

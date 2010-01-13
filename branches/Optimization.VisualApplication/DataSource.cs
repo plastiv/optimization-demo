@@ -9,7 +9,7 @@ namespace Optimization.VisualApplication
 {
     using System.Windows;
     using Microsoft.Research.DynamicDataDisplay.DataSources.MultiDimensional;
-    using OptimizationMethods;
+    using Optimization.Methods;
 
     /// <summary>
     /// Класс, отвечающий за построение значений, для линии уровня функции (массив значений f(x1,x2) и сами значения x1,x2).
@@ -47,6 +47,31 @@ namespace Optimization.VisualApplication
                 GetData(func, minValue, maxValue, pointCount),
                 GetGridData(minValue, maxValue, pointCount));
         }
+
+        //internal static CompositeDataSource GetCompositeDataSource(ManyVariable func, int minValue, int maxValue, int pointCount)
+        //{
+        //    EnumerableDataSource<double> xDataSource;
+        //    EnumerableDataSource<double> yDataSource;
+
+        //    // Prepare data in arrays
+        //    for (int i = 0; i < N; i++)
+        //    {
+        //        x[i] = i * 0.2;
+        //        y[i] = Math.Cos(x[i]);
+        //    }
+
+        //    // Add data sources:
+        //    yDataSource = new EnumerableDataSource<double>(y);
+        //    yDataSource.SetYMapping(Y => Y);
+        //    yDataSource.AddMapping(ShapeElementPointMarker.ToolTipTextProperty,
+        //        Y => String.Format("Value is {0}", Y));
+
+        //    xDataSource = new EnumerableDataSource<double>(x);
+        //    xDataSource.SetXMapping(X => X);
+
+
+        //    return new CompositeDataSource(xDataSource, yDataSource);
+        //}
         #endregion
 
         #region Private Methods

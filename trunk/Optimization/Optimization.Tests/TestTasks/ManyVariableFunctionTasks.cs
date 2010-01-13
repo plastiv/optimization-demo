@@ -3,15 +3,15 @@
     using System;
     using Optimization.Methods;
 
-    abstract internal class ManyVariableFunctionTask
+    abstract public class ManyVariableFunctionTask
     {
-        internal ManyVariable function;
-        internal int funcDimension;
-        internal double[] startPoint;
-        internal double[] exactSolution;
+        public ManyVariable function;
+        public int funcDimension;
+        public double[] startPoint;
+        public double[] exactSolution;
     }
 
-    internal class ManyVariableFunctionTask0 : ManyVariableFunctionTask
+    public class ManyVariableFunctionTask0 : ManyVariableFunctionTask
     {
         public ManyVariableFunctionTask0()
         {
@@ -23,9 +23,14 @@
             this.exactSolution = new double[] { 0.5, -1.25 };
             this.funcDimension = 2;
         }
+
+        public override string ToString()
+        {
+            return "Function 0";
+        }
     }
 
-    internal class ManyVariableFunctionTask1 : ManyVariableFunctionTask
+    public class ManyVariableFunctionTask1 : ManyVariableFunctionTask
     {
         public ManyVariableFunctionTask1()
         {
@@ -37,9 +42,14 @@
             this.exactSolution = new double[] { 1, 1 };
             this.funcDimension = 2;
         }
+
+        public override string ToString()
+        {
+            return "Function 1";
+        }
     }
 
-    internal class ManyVariableFunctionTask2 : ManyVariableFunctionTask
+    public class ManyVariableFunctionTask2 : ManyVariableFunctionTask
     {
         public ManyVariableFunctionTask2()
         {
@@ -51,9 +61,14 @@
                     this.exactSolution = new double[] { 0, 1 };
             this.funcDimension = 2;
         }
+
+        public override string ToString()
+        {
+            return "Function 2";
+        }
     }
 
-    internal class ManyVariableFunctionTask3 : ManyVariableFunctionTask
+    public class ManyVariableFunctionTask3 : ManyVariableFunctionTask
     {
         public ManyVariableFunctionTask3()
         {
@@ -66,9 +81,14 @@
                     this.exactSolution = new double[] { 0, 1 };
             this.funcDimension = 2;
         }
+
+        public override string ToString()
+        {
+            return "Function 3";
+        }
     }
 
-    internal class ManyVariableFunctionTask4 : ManyVariableFunctionTask
+    public class ManyVariableFunctionTask4 : ManyVariableFunctionTask
     {
         public ManyVariableFunctionTask4()
         {
@@ -80,9 +100,14 @@
                     this.exactSolution = new double[] { 1, 1 };
             this.funcDimension = 2;
         }
+
+        public override string ToString()
+        {
+            return "Function 4";
+        }
     }
 
-    internal class ManyVariableFunctionTask5 : ManyVariableFunctionTask
+    public class ManyVariableFunctionTask5 : ManyVariableFunctionTask
     {
         public ManyVariableFunctionTask5()
         {
@@ -94,9 +119,14 @@
                     this.exactSolution = new double[] { 1, 1 };
             this.funcDimension = 2;
         }
+
+        public override string ToString()
+        {
+            return "Function 5";
+        }
     }
 
-    internal class ManyVariableFunctionTask6 : ManyVariableFunctionTask
+    public class ManyVariableFunctionTask6 : ManyVariableFunctionTask
     {
         public ManyVariableFunctionTask6()
         {
@@ -108,9 +138,14 @@
                     this.exactSolution = new double[] { 5, 6 };
             this.funcDimension = 2;
         }
+
+        public override string ToString()
+        {
+            return "Function 6";
+        }
     }
 
-    internal class ManyVariableFunctionTask7 : ManyVariableFunctionTask
+    public class ManyVariableFunctionTask7 : ManyVariableFunctionTask
     {
         public ManyVariableFunctionTask7()
         {
@@ -122,9 +157,14 @@
                     this.exactSolution = new double[] { 3, 2 };
             this.funcDimension = 2;
         }
+
+        public override string ToString()
+        {
+            return "Function 7";
+        }
     }
 
-    internal class ManyVariableFunctionTask8 : ManyVariableFunctionTask
+    public class ManyVariableFunctionTask8 : ManyVariableFunctionTask
     {
         public ManyVariableFunctionTask8()
         {
@@ -136,9 +176,14 @@
                     this.exactSolution = new double[] { 0, 0 };
             this.funcDimension = 2;
         }
+
+        public override string ToString()
+        {
+            return "Function 8";
+        }
     }
 
-    internal class ManyVariableFunctionTask9 : ManyVariableFunctionTask
+    public class ManyVariableFunctionTask9 : ManyVariableFunctionTask
     {
         public ManyVariableFunctionTask9()
         {
@@ -150,9 +195,14 @@
                     this.exactSolution = new double[] { 1, 1 };
             this.funcDimension = 2;
         }
+
+        public override string ToString()
+        {
+            return "Function 9";
+        }
     }
 
-    internal class ManyVariableFunctionTask10 : ManyVariableFunctionTask
+    public class ManyVariableFunctionTask10 : ManyVariableFunctionTask
     {
         public ManyVariableFunctionTask10()
         {
@@ -164,6 +214,11 @@
             this.startPoint = new double[] { 0.5, 1 };
             this.exactSolution = new double[] { 1, 0 };
             this.funcDimension = 2;
+        }
+
+        public override string ToString()
+        {
+            return "Function 10";
         }
     }
 }

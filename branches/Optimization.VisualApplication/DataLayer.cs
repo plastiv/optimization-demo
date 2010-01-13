@@ -9,49 +9,47 @@ namespace Optimization.VisualApplication
 {
     using System.Windows;
     using System.Windows.Media;
-    using OptimizationMethods;
+    using Optimization.Methods;
 
-    internal class DataLayer
+    internal class LineSource
     {
         #region Public Fields
-        internal ManyVariable Function
-        {
-            get;
-            set;
-        }
-
-        internal int SolutionCount
-        {
-            get { return solutionCount; }
-        }
+        
         #endregion
 
         #region Private Fields
+        private readonly ManyVariable function;
         private double[][] solutions;
-        private int solutionCount;
+        private int pointsCount;
         #endregion
 
         #region Constructors
-
+        public LineSource(ManyVariable function)
+        {
+            this.function = function;
+        }
         #endregion
 
         #region Properties
-
+        internal int PointsCount
+        {
+            get { return pointsCount; }
+        }
         #endregion
 
         #region Public Methods
-        internal PointCollection GetSolutionPoints(object methodIndex, double[] startingPoint)
+        internal PointCollection GetPointCollection(object methodIndex, double[] startingPoint)
         {
             switch ((Methods)methodIndex)
             {
                 case (Methods.Gradient):
-                    solutions = Minimum.GradientDescentExtended(Function, 2, startingPoint);
-                    solutionCount = solutions.Length;
+                    solutions = Minimum.GradientDescentExtended(function, 2, startingPoint);
+                    pointsCount = solutions.Length;
                     return GetPoints();
                     break;
                 case (Methods.Hooke_Jeves):
-                    solutions = Minimum.HookeJeveesExtended(Function, 2, startingPoint);
-                    solutionCount = solutions.Length;
+                    solutions = Minimum.HookeJeveesExtended(function, 2, startingPoint);
+                    pointsCount = solutions.Length;
                     return GetPoints();
                     break;
                 default:

@@ -37,9 +37,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\DynamicDataDisplay.dll</HintPath>
     </Reference>
-    <Reference Include="OptimizationMethods, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ff2a95caeeac13c8, processorArchitecture=MSIL">
+    <Reference Include="Optimization.Methods, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ff2a95caeeac13c8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\OptimizationMethods\FunctionOptimization\bin\Debug\OptimizationMethods.dll</HintPath>
+      <HintPath>..\Optimization.Methods\bin\Debug\Optimization.Methods.dll</HintPath>
+    </Reference>
+    <Reference Include="Optimization.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Optimization.Tests\bin\Debug\Optimization.Tests.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -91,7 +95,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="testFunctions.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

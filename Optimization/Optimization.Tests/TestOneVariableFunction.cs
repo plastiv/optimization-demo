@@ -1,14 +1,15 @@
 ﻿
 namespace Optimization.Tests
 {
+    using System;
     using NUnit.Framework;
     using Optimization.Methods.ZerothOrder.OneVariable;
-    using System;
 
     [TestFixture(0, 0, 10, 0.01, 3)]
     [TestFixture(1, 1, 5, 0.01, 1.23)]
     [TestFixture(2, 0.2, 1.6, 0.01, 1.6)]
     [TestFixture(3, -1, 4, 0.01, 4)]
+    [Ignore]
     class TestOneVariableFunction
     {
         private readonly double eps;

@@ -80,8 +80,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataLayer.cs" />
     <Compile Include="DataSource.cs" />
+    <Compile Include="LineSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

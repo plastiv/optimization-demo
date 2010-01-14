@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="IsolineSource.cs" />
     <Compile Include="LineSource.cs" />
+    <Compile Include="MethodLine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

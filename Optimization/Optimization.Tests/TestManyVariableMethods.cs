@@ -18,7 +18,7 @@
     //[Ignore]
     class TestManyVariableMethods
     {
-        private const double precision = 2;
+        private const double precision = 0.1;
         private readonly ManyVariableFunctionTask task;
 
         public TestManyVariableMethods(int taskNum)
@@ -74,7 +74,7 @@
             }
         }
 
-        [Test]
+        [Test]        
         public void TestGradientMethod()
         {
             double[] result = Minimum.GradientDescent(this.task.function, 2, this.task.startPoint);
@@ -83,6 +83,7 @@
         }
 
         [Test]
+        [Ignore]
         public void TestDeformablePolyhedronMethod()
         {
             double[] result = Minimum.DeformablePolyhedron(this.task.function, 2, this.task.startPoint);
@@ -91,6 +92,7 @@
         }
 
         [Test]
+        [Ignore]
         public void TestHookeJeveesMethod()
         {
             double[] result = Minimum.HookeJevees(this.task.function, 2, this.task.startPoint);
@@ -99,6 +101,7 @@
         }
 
         [Test]
+        [Ignore]
         public void TestRandomMethod()
         {
             double[] result = Minimum.Random(this.task.function, 2, this.task.startPoint);
@@ -107,6 +110,7 @@
         }
 
         [Test]
+        [Ignore]
         public void TestRosenbrockMethod()
         {
             double[] result = Minimum.Rosenbrock(this.task.function, 2, this.task.startPoint);

@@ -8,7 +8,7 @@
     <WrapPanel DockPanel.Dock="Top">
       <Menu Name="mainMenu" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="DarkGray">
         <MenuItem Header="Настройки" Click="MenuItemIsoline_Click" ToolTip="Установки разрешения изолиний."/>
-        <MenuItem Header="О программе"/>        
+        <MenuItem Header="О программе"/>
       </Menu>
     </WrapPanel>
     <WrapPanel DockPanel.Dock="Top">
@@ -22,8 +22,9 @@
       <Button Name="btnRemoveLine"  Padding="3" Click="btnRemove_Click">Remove Line</Button>
     </WrapPanel>
     <StackPanel DockPanel.Dock="Right">
-            <CheckBox Name="chkTrackingGraph" Click="chkTrackingGraph_Click" Height="16" Width="120">Tracking Graph</CheckBox>
-        </StackPanel>
+      <CheckBox Name="chkTrackingGraph" Click="chkTrackingGraph_Click" Height="16" Width="120">Tracking Graph</CheckBox>
+      <CheckBox Name="chkCursorCoordinateGraph" Click="chkCursorCoordinateGraph_Click" Height="16" Width="120">Cursor Coordinate Graph</CheckBox>
+    </StackPanel>
     <TextBox DockPanel.Dock="Top" Name="txtFunction"></TextBox>
     <d3:ChartPlotter Name="plotter">
       <d3:IsolineGraph Name="isolineGraph"/>

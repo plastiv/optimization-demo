@@ -76,6 +76,19 @@ namespace Optimization.VisualApplication
         #endregion
 
         #region Private Methods
+        private double[] GetPoints(int maxValue, int minValue, int pointCount)
+        {
+            double step = (double)(maxValue - minValue) / pointCount;
+            double[] result = new double[pointCount];
+
+            for (int i = 0; i < pointCount; i++)
+            {
+                result[i] = minValue + (i * step);
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Gets сетку точек x1,x2 для которых будет построена линия уровня.
         /// </summary>

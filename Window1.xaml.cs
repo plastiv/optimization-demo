@@ -7,6 +7,8 @@ using Microsoft.Research.DynamicDataDisplay.PointMarkers;
 using Optimization.Tests.Tasks;
 using Microsoft.Research.DynamicDataDisplay.Charts;
 using Microsoft.Research.DynamicDataDisplay.Charts.Navigation;
+using System.Windows.Documents;
+using System.Collections.Generic;
 
 namespace Optimization.VisualApplication
 {
@@ -19,10 +21,12 @@ namespace Optimization.VisualApplication
         readonly private int maxValue = Optimization.VisualApplication.Properties.Settings.Default.MaxValue;
         readonly private int pointCount = Optimization.VisualApplication.Properties.Settings.Default.PointCount;
 
-        LineSource lineSource;
-        ViewportPolyline viewportPolyline;
-        WarpedDataSource2D<double> warpedDataSource2D;
         int solPointIndex;
+
+        LineSource lineSource;
+        WarpedDataSource2D<double> warpedDataSource2D;
+
+        Queue<ViewportPolyline> viewportPolylines;
         IsolineTrackingGraph trackingGraph;
         CursorCoordinateGraph cursorCoordinateGraph;
 
@@ -32,7 +36,7 @@ namespace Optimization.VisualApplication
 
             solPointIndex = 0;
 
-            viewportPolyline = new ViewportPolyline();
+            viewportPolylines = new Queue<ViewportPolyline>();
             cursorCoordinateGraph = new CursorCoordinateGraph();
 
             Loaded += new RoutedEventHandler(Window1_Loaded);
@@ -58,7 +62,10 @@ namespace Optimization.VisualApplication
 
         private void cmbFunctions_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            plotter.Children.Remove(viewportPolyline);
+            while (viewportPolylines.Count != 0)
+            {
+                plotter.Children.Remove(viewportPolylines.Dequeue());
+            }
 
             ManyVariableFunctionTask selectedTask = (ManyVariableFunctionTask)cmbFunctions.SelectedItem;
             txtFunction.Text = selectedTask.expression;
@@ -73,25 +80,30 @@ namespace Optimization.VisualApplication
             plotter.Viewport.Visible = visible;
         }
 
-        private void btnStart_Click(object sender, RoutedEventArgs e)
+        private void btnAddLine_Click(object sender, RoutedEventArgs e)
         {
-            plotter.Children.Remove(viewportPolyline);
-            viewportPolyline.Points = lineSource.GetPointCollection(cmbMethods.SelectedItem, new double[2] { double.Parse(txtX1.Text), double.Parse(txtX2.Text) });
             solPointIndex = lineSource.PointsCount;
 
-            plotter.AddChild(viewportPolyline);
+            ViewportPolyline myvpLine = new ViewportPolyline();
+            myvpLine.Points = lineSource.GetPointCollection(cmbMethods.SelectedItem, new double[2] { double.Parse(txtX1.Text), double.Parse(txtX2.Text) });
+            viewportPolylines.Enqueue(myvpLine);
+
+            plotter.AddChild(myvpLine);
         }
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)
         {
-            plotter.Children.Remove(viewportPolyline);
+            if (viewportPolylines.Count != 0)
+            {
+                plotter.Children.Remove(viewportPolylines.Dequeue());
+            }
         }
 
         private void btnForward_Click(object sender, RoutedEventArgs e)
         {
             if (solPointIndex < lineSource.PointsCount)
             {
-                viewportPolyline.Points.Add(lineSource.GetPointAt(solPointIndex));
+                //viewportPolyline.Points.Add(lineSource.GetPointAt(solPointIndex));
                 solPointIndex++;
             }
         }
@@ -100,7 +112,7 @@ namespace Optimization.VisualApplication
         {
             if (solPointIndex > 0)
             {
-                viewportPolyline.Points.RemoveAt(solPointIndex - 1);
+                //viewportPolyline.Points.RemoveAt(solPointIndex - 1);
                 solPointIndex--;
             }
         }

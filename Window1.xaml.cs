@@ -69,7 +69,7 @@ namespace Optimization.VisualApplication
             lineSource = new LineSource(selectedTask.function);
             txtX1.Text = selectedTask.startPoint[0].ToString();
             txtX2.Text = selectedTask.startPoint[1].ToString();
-            warpedDataSource2D = DataSource.GetDataSource(selectedTask.function, minValue, maxValue, pointCount);
+            warpedDataSource2D = IsolineSource.GetDataSource(selectedTask.function, minValue, maxValue, pointCount);
             isolineGraph.DataSource = warpedDataSource2D;
             trackingGraph = new IsolineTrackingGraph(); // TODO: Lazy initialization.
             trackingGraph.DataSource = warpedDataSource2D;

@@ -14,7 +14,7 @@ namespace Optimization.VisualApplication
     /// <summary>
     /// Класс, отвечающий за построение значений, для линии уровня функции (массив значений f(x1,x2) и сами значения x1,x2).
     /// </summary>
-    internal static class IsolineSource
+    internal class IsolineSource
     {
         #region Public Fields
 
@@ -76,7 +76,7 @@ namespace Optimization.VisualApplication
         #endregion
 
         #region Private Methods
-        private double[] GetPoints(int maxValue, int minValue, int pointCount)
+        private static double[] GetPoints(int maxValue, int minValue, int pointCount)
         {
             double step = (double)(maxValue - minValue) / pointCount;
             double[] result = new double[pointCount];
@@ -101,20 +101,8 @@ namespace Optimization.VisualApplication
         /// <returns>Точки[x1, x2].</returns>
         private static Point[,] GetGridData(int minX, int maxX, int minY, int maxY, int pointCountX, int pointCountY)
         {
-            double stepX = (double)(maxX - minX) / pointCountX;
-            double stepY = (double)(maxY - minY) / pointCountY;
-
-            double[] pointX = new double[pointCountX];
-            double[] pointY = new double[pointCountY];
-            for (int row = 0; row < pointCountX; row++)
-            {
-                pointX[row] = minX + (row * stepX);
-            }
-
-            for (int column = 0; column < pointCountY; column++)
-            {
-                pointY[column] = minY + (column * stepY);
-            }
+            double[] pointX = GetPoints(maxX, minX, pointCountX);
+            double[] pointY = GetPoints(maxY, minY, pointCountY);
 
             Point[,] gridData = new Point[pointCountY, pointCountX];
             for (int row = 0; row < pointCountX; row++)
@@ -155,20 +143,8 @@ namespace Optimization.VisualApplication
         /// <returns>Значение функции в точках x1,x2.</returns>
         private static double[,] GetData(ManyVariable func, int minX, int maxX, int minY, int maxY, int pointCountX, int pointCountY)
         {
-            double stepX = (double)(maxX - minX) / pointCountX;
-            double stepY = (double)(maxY - minY) / pointCountY;
-
-            double[] pointX = new double[pointCountX];
-            double[] pointY = new double[pointCountY];
-            for (int row = 0; row < pointCountX; row++)
-            {
-                pointX[row] = minX + (row * stepX);
-            }
-
-            for (int column = 0; column < pointCountY; column++)
-            {
-                pointY[column] = minY + (column * stepY);
-            }
+            double[] pointX = GetPoints(maxX, minX, pointCountX);
+            double[] pointY = GetPoints(maxY, minY, pointCountY);
 
             double[,] data = new double[pointCountX, pointCountY];
             for (int row = 0; row < pointCountY; row++)

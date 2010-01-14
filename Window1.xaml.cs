@@ -23,7 +23,6 @@ namespace Optimization.VisualApplication
         ViewportPolyline viewportPolyline;
         WarpedDataSource2D<double> warpedDataSource2D;
         int solPointIndex;
-        int solPointCount;
         IsolineTrackingGraph trackingGraph;
         CursorCoordinateGraph cursorCoordinateGraph;
 
@@ -31,7 +30,6 @@ namespace Optimization.VisualApplication
         {
             InitializeComponent();
 
-            solPointCount = 0;
             solPointIndex = 0;
 
             viewportPolyline = new ViewportPolyline();
@@ -79,8 +77,7 @@ namespace Optimization.VisualApplication
         {
             plotter.Children.Remove(viewportPolyline);
             viewportPolyline.Points = lineSource.GetPointCollection(cmbMethods.SelectedItem, new double[2] { double.Parse(txtX1.Text), double.Parse(txtX2.Text) });
-            solPointCount = lineSource.PointsCount;
-            solPointIndex = solPointCount;
+            solPointIndex = lineSource.PointsCount;
 
             plotter.AddChild(viewportPolyline);
         }
@@ -92,7 +89,7 @@ namespace Optimization.VisualApplication
 
         private void btnForward_Click(object sender, RoutedEventArgs e)
         {
-            if (solPointIndex < solPointCount)
+            if (solPointIndex < lineSource.PointsCount)
             {
                 viewportPolyline.Points.Add(lineSource.GetPointAt(solPointIndex));
                 solPointIndex++;

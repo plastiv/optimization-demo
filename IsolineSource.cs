@@ -21,11 +21,37 @@ namespace Optimization.VisualApplication
         #endregion
 
         #region Private Fields
-
+        private readonly ManyVariable function;
+        private readonly int minValueX;
+        private readonly int maxValueX;
+        private readonly int pointCountX;
+        private readonly int minValueY;
+        private readonly int maxValueY;
+        private readonly int pointCountY;
         #endregion
 
         #region Constructors
+        public IsolineSource(ManyVariable func, int minX, int maxX, int minY, int maxY, int pointCountX, int pointCountY)
+        {
+            this.function = func;
+            this.minValueX = minX;
+            this.maxValueX = maxX;
+            this.minValueY = minY;
+            this.maxValueY = maxY;
+            this.pointCountX = pointCountX;
+            this.pointCountY = pointCountY;
+        }
 
+        public IsolineSource(ManyVariable func, int minValue, int maxValue, int pointCount)
+        {
+            this.function = func;
+            this.minValueX = minValue;
+            this.maxValueX = maxValue;
+            this.minValueY = minValue;
+            this.maxValueY = maxValue;
+            this.pointCountX = pointCount;
+            this.pointCountY = pointCount;
+        }
         #endregion
 
         #region Properties
@@ -47,31 +73,6 @@ namespace Optimization.VisualApplication
                 GetData(func, minValue, maxValue, pointCount),
                 GetGridData(minValue, maxValue, pointCount));
         }
-
-        //internal static CompositeDataSource GetCompositeDataSource(ManyVariable func, int minValue, int maxValue, int pointCount)
-        //{
-        //    EnumerableDataSource<double> xDataSource;
-        //    EnumerableDataSource<double> yDataSource;
-
-        //    // Prepare data in arrays
-        //    for (int i = 0; i < N; i++)
-        //    {
-        //        x[i] = i * 0.2;
-        //        y[i] = Math.Cos(x[i]);
-        //    }
-
-        //    // Add data sources:
-        //    yDataSource = new EnumerableDataSource<double>(y);
-        //    yDataSource.SetYMapping(Y => Y);
-        //    yDataSource.AddMapping(ShapeElementPointMarker.ToolTipTextProperty,
-        //        Y => String.Format("Value is {0}", Y));
-
-        //    xDataSource = new EnumerableDataSource<double>(x);
-        //    xDataSource.SetXMapping(X => X);
-
-
-        //    return new CompositeDataSource(xDataSource, yDataSource);
-        //}
         #endregion
 
         #region Private Methods

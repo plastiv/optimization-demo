@@ -20,7 +20,7 @@ namespace Optimization.VisualApplication
         readonly private int pointCount;
 
         LineSource lineSource;
-        ViewportPolyline vwpolyline;
+        ViewportPolyline viewportPolyline;
         WarpedDataSource2D<double> dataSource;
         int solPointIndex;
         int solPointCount;
@@ -37,7 +37,7 @@ namespace Optimization.VisualApplication
 
             solPointCount = 0;
             solPointIndex = 0;
-            vwpolyline = new ViewportPolyline();
+            viewportPolyline = new ViewportPolyline();
             cursorCoordinateGraph = new CursorCoordinateGraph();
             Loaded += new RoutedEventHandler(Window1_Loaded);
         }
@@ -62,7 +62,7 @@ namespace Optimization.VisualApplication
 
         private void cmbFunctions_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            plotter.Children.Remove(vwpolyline);
+            plotter.Children.Remove(viewportPolyline);
 
             ManyVariableFunctionTask selectedTask = (ManyVariableFunctionTask)cmbFunctions.SelectedItem;
             txtFunction.Text = selectedTask.expression;
@@ -79,24 +79,24 @@ namespace Optimization.VisualApplication
 
         private void btnStart_Click(object sender, RoutedEventArgs e)
         {
-            plotter.Children.Remove(vwpolyline);
-            vwpolyline.Points = lineSource.GetPointCollection(cmbMethods.SelectedItem, new double[2] { double.Parse(txtX1.Text), double.Parse(txtX2.Text) });
+            plotter.Children.Remove(viewportPolyline);
+            viewportPolyline.Points = lineSource.GetPointCollection(cmbMethods.SelectedItem, new double[2] { double.Parse(txtX1.Text), double.Parse(txtX2.Text) });
             solPointCount = lineSource.PointsCount;
             solPointIndex = solPointCount;
 
-            plotter.AddChild(vwpolyline);
+            plotter.AddChild(viewportPolyline);
         }
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)
         {
-            plotter.Children.Remove(vwpolyline);
+            plotter.Children.Remove(viewportPolyline);
         }
 
         private void btnForward_Click(object sender, RoutedEventArgs e)
         {
             if (solPointIndex < solPointCount)
             {
-                vwpolyline.Points.Add(lineSource.GetCurrPoint(solPointIndex));
+                viewportPolyline.Points.Add(lineSource.GetCurrPoint(solPointIndex));
                 solPointIndex++;
             }
         }
@@ -105,7 +105,7 @@ namespace Optimization.VisualApplication
         {
             if (solPointIndex > 0)
             {
-                vwpolyline.Points.RemoveAt(solPointIndex - 1);
+                viewportPolyline.Points.RemoveAt(solPointIndex - 1);
                 solPointIndex--;
             }
         }

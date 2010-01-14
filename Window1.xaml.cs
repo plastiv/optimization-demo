@@ -9,6 +9,7 @@ using Microsoft.Research.DynamicDataDisplay.Charts;
 using Microsoft.Research.DynamicDataDisplay.Charts.Navigation;
 using System.Windows.Documents;
 using System.Collections.Generic;
+using Microsoft.Research.DynamicDataDisplay;
 
 namespace Optimization.VisualApplication
 {
@@ -21,12 +22,12 @@ namespace Optimization.VisualApplication
         readonly private int maxValue = Optimization.VisualApplication.Properties.Settings.Default.MaxValue;
         readonly private int pointCount = Optimization.VisualApplication.Properties.Settings.Default.PointCount;
 
-        int solPointIndex;
+        //int solPointIndex;
 
-        LineSource lineSource;
+        //LineSource lineSource;
         WarpedDataSource2D<double> warpedDataSource2D;
 
-        Queue<ViewportPolyline> viewportPolylines;
+        Queue<MethodLine> methodLines;
         IsolineTrackingGraph trackingGraph;
         CursorCoordinateGraph cursorCoordinateGraph;
 
@@ -34,9 +35,9 @@ namespace Optimization.VisualApplication
         {
             InitializeComponent();
 
-            solPointIndex = 0;
+            //solPointIndex = 0;
 
-            viewportPolylines = new Queue<ViewportPolyline>();
+            methodLines = new Queue<MethodLine>();
             cursorCoordinateGraph = new CursorCoordinateGraph();
 
             Loaded += new RoutedEventHandler(Window1_Loaded);
@@ -62,14 +63,14 @@ namespace Optimization.VisualApplication
 
         private void cmbFunctions_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            while (viewportPolylines.Count != 0)
+            while (methodLines.Count != 0)
             {
-                plotter.Children.Remove(viewportPolylines.Dequeue());
+                plotter.Children.Remove(methodLines.Dequeue().ViewpontPolyline);
             }
 
             ManyVariableFunctionTask selectedTask = (ManyVariableFunctionTask)cmbFunctions.SelectedItem;
             txtFunction.Text = selectedTask.expression;
-            lineSource = new LineSource(selectedTask.function);
+            //lineSource = new LineSource(selectedTask.function);
             txtX1.Text = selectedTask.startPoint[0].ToString();
             txtX2.Text = selectedTask.startPoint[1].ToString();
             warpedDataSource2D = IsolineSource.GetWarpedDataSource2D(selectedTask.function, minValue, maxValue, pointCount);
@@ -82,39 +83,28 @@ namespace Optimization.VisualApplication
 
         private void btnAddLine_Click(object sender, RoutedEventArgs e)
         {
-            solPointIndex = lineSource.PointsCount;
+            MethodLine tempMethodLine = new MethodLine((ManyVariableFunctionTask)cmbFunctions.SelectedItem,cmbMethods.SelectedItem,new double[2] { double.Parse(txtX1.Text), double.Parse(txtX2.Text) });
+            methodLines.Enqueue(tempMethodLine);
 
-            ViewportPolyline myvpLine = new ViewportPolyline();
-            myvpLine.Points = lineSource.GetPointCollection(cmbMethods.SelectedItem, new double[2] { double.Parse(txtX1.Text), double.Parse(txtX2.Text) });
-            viewportPolylines.Enqueue(myvpLine);
-
-            plotter.AddChild(myvpLine);
+            plotter.AddChild(tempMethodLine.ViewpontPolyline);
         }
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)
         {
-            if (viewportPolylines.Count != 0)
+            if (methodLines.Count != 0)
             {
-                plotter.Children.Remove(viewportPolylines.Dequeue());
+                plotter.Children.Remove(methodLines.Dequeue().ViewpontPolyline);
             }
         }
 
         private void btnForward_Click(object sender, RoutedEventArgs e)
         {
-            if (solPointIndex < lineSource.PointsCount)
-            {
-                //viewportPolyline.Points.Add(lineSource.GetPointAt(solPointIndex));
-                solPointIndex++;
-            }
+            methodLines.Peek().AddPoint();
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
-            if (solPointIndex > 0)
-            {
-                //viewportPolyline.Points.RemoveAt(solPointIndex - 1);
-                solPointIndex--;
-            }
+            methodLines.Peek().RemovePoint();
         }
 
         private void chkTrackingGraph_Click(object sender, RoutedEventArgs e)

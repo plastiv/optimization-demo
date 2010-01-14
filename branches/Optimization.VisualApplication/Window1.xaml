@@ -27,7 +27,6 @@
     <TextBox DockPanel.Dock="Top" Name="txtFunction"></TextBox>
     <d3:ChartPlotter Name="plotter">
       <d3:IsolineGraph Name="isolineGraph"/>
-      <d3:CursorCoordinateGraph/>
     </d3:ChartPlotter>
   </DockPanel>
 </Window>

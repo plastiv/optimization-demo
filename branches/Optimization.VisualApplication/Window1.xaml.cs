@@ -6,6 +6,7 @@ using Microsoft.Research.DynamicDataDisplay.DataSources.MultiDimensional;
 using Microsoft.Research.DynamicDataDisplay.PointMarkers;
 using Optimization.Tests.Tasks;
 using Microsoft.Research.DynamicDataDisplay.Charts;
+using Microsoft.Research.DynamicDataDisplay.Charts.Navigation;
 
 namespace Optimization.VisualApplication
 {
@@ -24,6 +25,7 @@ namespace Optimization.VisualApplication
         int solPointIndex;
         int solPointCount;
         IsolineTrackingGraph trackingGraph;
+        CursorCoordinateGraph cursorCoordinateGraph;
 
         public Window1()
         {

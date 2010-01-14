@@ -38,6 +38,7 @@ namespace Optimization.VisualApplication
             solPointCount = 0;
             solPointIndex = 0;
             vwpolyline = new ViewportPolyline();
+            cursorCoordinateGraph = new CursorCoordinateGraph();
             Loaded += new RoutedEventHandler(Window1_Loaded);
         }
 
@@ -118,6 +119,18 @@ namespace Optimization.VisualApplication
             else
             {
                 plotter.Children.Remove(trackingGraph);
+            }
+        }
+
+        private void chkCursorCoordinateGraph_Click(object sender, RoutedEventArgs e)
+        {
+            if (chkCursorCoordinateGraph.IsChecked == true)
+            {
+                plotter.AddChild(cursorCoordinateGraph);
+            }
+            else
+            {
+                plotter.Children.Remove(cursorCoordinateGraph);
             }
         }
 

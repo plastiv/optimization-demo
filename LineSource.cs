@@ -58,7 +58,7 @@ namespace Optimization.VisualApplication
             }
         }
 
-        internal Point GetCurrPoint(int index)
+        internal Point GetPointAt(int index)
         {
             return new Point(solutions[index][0], solutions[index][1]);
         }

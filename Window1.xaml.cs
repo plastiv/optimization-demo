@@ -94,7 +94,7 @@ namespace Optimization.VisualApplication
         {
             if (solPointIndex < solPointCount)
             {
-                viewportPolyline.Points.Add(lineSource.GetCurrPoint(solPointIndex));
+                viewportPolyline.Points.Add(lineSource.GetPointAt(solPointIndex));
                 solPointIndex++;
             }
         }

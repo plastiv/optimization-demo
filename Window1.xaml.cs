@@ -21,7 +21,7 @@ namespace Optimization.VisualApplication
 
         LineSource lineSource;
         ViewportPolyline viewportPolyline;
-        WarpedDataSource2D<double> dataSource;
+        WarpedDataSource2D<double> warpedDataSource2D;
         int solPointIndex;
         int solPointCount;
         IsolineTrackingGraph trackingGraph;
@@ -69,11 +69,11 @@ namespace Optimization.VisualApplication
             lineSource = new LineSource(selectedTask.function);
             txtX1.Text = selectedTask.startPoint[0].ToString();
             txtX2.Text = selectedTask.startPoint[1].ToString();
-            dataSource = DataSource.GetDataSource(selectedTask.function, minValue, maxValue, pointCount);
-            isolineGraph.DataSource = dataSource;
+            warpedDataSource2D = DataSource.GetDataSource(selectedTask.function, minValue, maxValue, pointCount);
+            isolineGraph.DataSource = warpedDataSource2D;
             trackingGraph = new IsolineTrackingGraph(); // TODO: Lazy initialization.
-            trackingGraph.DataSource = dataSource;
-            Rect visible = dataSource.GetGridBounds();
+            trackingGraph.DataSource = warpedDataSource2D;
+            Rect visible = warpedDataSource2D.GetGridBounds();
             plotter.Viewport.Visible = visible;
         }
 

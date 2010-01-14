@@ -67,16 +67,23 @@ namespace Optimization.VisualApplication
         /// <param name="maxValue">Максимальное значение x1,x2.</param>
         /// <param name="pointCount">Количество расчитываемых точек в диапазоне |xmax-xmin|.</param>
         /// <returns>Значения f(x1,x2), x1, x2.</returns>
-        internal static WarpedDataSource2D<double> GetDataSource(ManyVariable func, int minValue, int maxValue, int pointCount)
+        internal static WarpedDataSource2D<double> GetWarpedDataSource2D(ManyVariable func, int minValue, int maxValue, int pointCount)
         {
             return new WarpedDataSource2D<double>(
                 GetData(func, minValue, maxValue, pointCount),
                 GetGridData(minValue, maxValue, pointCount));
         }
+
+        internal static WarpedDataSource2D<double> GetWarpedDataSource2D(ManyVariable func, int minX, int maxX, int minY, int maxY, int pointCountX, int pointCountY)
+        {
+            return new WarpedDataSource2D<double>(
+                GetData(func, minX, maxX, minY, maxY, pointCountX, pointCountY),
+                GetGridData(minX, maxX, minY, maxY, pointCountX, pointCountY));
+        }
         #endregion
 
         #region Private Methods
-        private static double[] GetPoints(int maxValue, int minValue, int pointCount)
+        private static double[] GetPoints(int minValue, int maxValue, int pointCount)
         {
             double step = (double)(maxValue - minValue) / pointCount;
             double[] result = new double[pointCount];
@@ -88,6 +95,8 @@ namespace Optimization.VisualApplication
 
             return result;
         }
+
+        // ------------------------------------------------------------------------------------------------
 
         /// <summary>
         /// Gets сетку точек x1,x2 для которых будет построена линия уровня.
@@ -101,8 +110,8 @@ namespace Optimization.VisualApplication
         /// <returns>Точки[x1, x2].</returns>
         private static Point[,] GetGridData(int minX, int maxX, int minY, int maxY, int pointCountX, int pointCountY)
         {
-            double[] pointX = GetPoints(maxX, minX, pointCountX);
-            double[] pointY = GetPoints(maxY, minY, pointCountY);
+            double[] pointX = GetPoints(minX, maxX, pointCountX);
+            double[] pointY = GetPoints(minY, maxY, pointCountY);
 
             Point[,] gridData = new Point[pointCountY, pointCountX];
             for (int row = 0; row < pointCountX; row++)
@@ -143,8 +152,8 @@ namespace Optimization.VisualApplication
         /// <returns>Значение функции в точках x1,x2.</returns>
         private static double[,] GetData(ManyVariable func, int minX, int maxX, int minY, int maxY, int pointCountX, int pointCountY)
         {
-            double[] pointX = GetPoints(maxX, minX, pointCountX);
-            double[] pointY = GetPoints(maxY, minY, pointCountY);
+            double[] pointX = GetPoints(minX, maxX, pointCountX);
+            double[] pointY = GetPoints(minY, maxY, pointCountY);
 
             double[,] data = new double[pointCountX, pointCountY];
             for (int row = 0; row < pointCountY; row++)

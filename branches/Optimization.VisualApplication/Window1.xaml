@@ -16,7 +16,7 @@
       <ComboBox Name="cmbMethods" SelectedIndex="1"></ComboBox>
       <TextBox Name="txtX1">4</TextBox>
       <TextBox Name="txtX2" >4</TextBox>
-      <Button Name="btnStart" Padding="3" Click="btnStart_Click">Start</Button>
+      <Button Name="btnAddLine" Padding="3" Click="btnAddLine_Click">Add Line</Button>
       <Button Name="btnForward" Padding="3" Click="btnForward_Click">fwd</Button>
       <Button Name="btnBack" Padding="3" Click="btnBack_Click">back</Button>
       <Button Name="btnRemoveLine"  Padding="3" Click="btnRemove_Click">Remove Line</Button>

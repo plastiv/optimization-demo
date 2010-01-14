@@ -14,7 +14,7 @@ namespace Optimization.VisualApplication
     /// <summary>
     /// Класс, отвечающий за построение значений, для линии уровня функции (массив значений f(x1,x2) и сами значения x1,x2).
     /// </summary>
-    internal static class DataSource
+    internal static class IsolineSource
     {
         #region Public Fields
 

@@ -15,9 +15,9 @@ namespace Optimization.VisualApplication
     /// </summary>
     public partial class Window1 : Window
     {
-        readonly private int minValue;
-        readonly private int maxValue;
-        readonly private int pointCount;
+        readonly private int minValue = Optimization.VisualApplication.Properties.Settings.Default.MinValue;
+        readonly private int maxValue = Optimization.VisualApplication.Properties.Settings.Default.MaxValue;
+        readonly private int pointCount = Optimization.VisualApplication.Properties.Settings.Default.PointCount;
 
         LineSource lineSource;
         ViewportPolyline viewportPolyline;
@@ -31,14 +31,12 @@ namespace Optimization.VisualApplication
         {
             InitializeComponent();
 
-            minValue = Optimization.VisualApplication.Properties.Settings.Default.MinValue;
-            maxValue = Optimization.VisualApplication.Properties.Settings.Default.MaxValue;
-            pointCount = Optimization.VisualApplication.Properties.Settings.Default.PointCount;
-
             solPointCount = 0;
             solPointIndex = 0;
+
             viewportPolyline = new ViewportPolyline();
             cursorCoordinateGraph = new CursorCoordinateGraph();
+
             Loaded += new RoutedEventHandler(Window1_Loaded);
         }
 

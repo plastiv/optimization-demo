@@ -22,9 +22,6 @@ namespace Optimization.VisualApplication
         readonly private int maxValue = Optimization.VisualApplication.Properties.Settings.Default.MaxValue;
         readonly private int pointCount = Optimization.VisualApplication.Properties.Settings.Default.PointCount;
 
-        //int solPointIndex;
-
-        //LineSource lineSource;
         WarpedDataSource2D<double> warpedDataSource2D;
 
         Queue<MethodLine> methodLines;
@@ -34,8 +31,6 @@ namespace Optimization.VisualApplication
         public Window1()
         {
             InitializeComponent();
-
-            //solPointIndex = 0;
 
             methodLines = new Queue<MethodLine>();
             cursorCoordinateGraph = new CursorCoordinateGraph();
@@ -70,7 +65,6 @@ namespace Optimization.VisualApplication
 
             ManyVariableFunctionTask selectedTask = (ManyVariableFunctionTask)cmbFunctions.SelectedItem;
             txtFunction.Text = selectedTask.expression;
-            //lineSource = new LineSource(selectedTask.function);
             txtX1.Text = selectedTask.startPoint[0].ToString();
             txtX2.Text = selectedTask.startPoint[1].ToString();
             warpedDataSource2D = IsolineSource.GetWarpedDataSource2D(selectedTask.function, minValue, maxValue, pointCount);

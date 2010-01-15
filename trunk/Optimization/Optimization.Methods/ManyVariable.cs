@@ -56,8 +56,8 @@ namespace Optimization.Methods
         /// <returns>Минимум функции со значениями промежуточных точек.</returns>
         public static double[][] GradientDescentExtended(ManyVariable function, int dimension, double[] startingPoint)
         {
-            GradientDescent gd = new GradientDescent(function, dimension);
-            return gd.GetExtendedMinimum(startingPoint);
+            GradientDescentExtended gde = new GradientDescentExtended(function, dimension);
+            return gde.GetMinimum(startingPoint);
         }
 
         /// <summary>

@@ -94,8 +94,8 @@ namespace Optimization.Methods.ZerothOrder
             // число е>0 для остановки алгоритма
             Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
 
-            double[] newBasis = startPoint;
-            double[] oldBasis = startPoint;
+            Point newBasis = new Point(startPoint);
+            Point oldBasis = new Point(startPoint);
 
             while (true)
             {
@@ -103,22 +103,13 @@ namespace Optimization.Methods.ZerothOrder
                 newBasis = this.ExploratarySearch(newBasis);
 
                 // Проверить успешность исследующего поиска:
-                if (this.Function(newBasis) < this.Function(oldBasis))
+                if (this.GetFuncValue(newBasis) < this.GetFuncValue(oldBasis))
                 {
                     // перейти к шагу 4;
 
                     // Сформируем х[k]
-                    double[] oldOldBasis = new double[this.Dimension];
-                    for (int i = 0; i < this.Dimension; i++)
-                    {
-                        oldOldBasis[i] = oldBasis[i];
-                    }
-
-                    // Шаг 4. Провести поиск по образцу. Положить x[k + 1] = yn+l,
-                    for (int i = 0; i < this.Dimension; i++)
-                    {
-                        oldBasis[i] = newBasis[i];
-                    }
+                    Point oldOldBasis = new Point(oldBasis.ToDouble());
+                    oldBasis.SetEqual(newBasis);
 
                     // y[0] = x[k + 1] + AccelerateCoefficient * (x[k + 1] - x[k]);
                     newBasis = this.PatternSearch(oldOldBasis, oldBasis);
@@ -143,10 +134,7 @@ namespace Optimization.Methods.ZerothOrder
                             }
                         }
 
-                        for (int i = 0; i < this.Dimension; i++)
-                        {
-                            newBasis[i] = oldBasis[i];
-                        }
+                        newBasis.SetEqual(oldBasis);
 
                         // перейти к шагу 2.
                         continue;
@@ -155,7 +143,7 @@ namespace Optimization.Methods.ZerothOrder
                     {
                         // Значение всех шагов меньше точности
                         // Поиск закончен
-                        return oldBasis;
+                        return oldBasis.ToDouble();
                     }
                 }
             }
@@ -168,9 +156,9 @@ namespace Optimization.Methods.ZerothOrder
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>Новую точку.</returns>
-        private double[] ExploratarySearch(double[] point)
+        private Point ExploratarySearch(Point point)
         {
-            Point result = new Point(point);
+            Point result = new Point(point.ToDouble());
 
             for (int i = 0; i < this.Dimension; i++)
             {
@@ -195,7 +183,7 @@ namespace Optimization.Methods.ZerothOrder
                 }
             }
 
-            return result.ToDouble();
+            return result;
         }
 
         private double GetFuncValue(Point point)
@@ -240,11 +228,9 @@ namespace Optimization.Methods.ZerothOrder
         /// <param name="oldBasis">The old basis.</param>
         /// <param name="basis">The basis.</param>
         /// <returns>Новую точку.</returns>
-        private double[] PatternSearch(double[] oldBasis, double[] basis)
+        private Point PatternSearch(Point oldBasis, Point basis)
         {
-            Point oldBas = new Point(oldBasis);
-            Point bas = new Point(basis);
-            return (bas + (this.AccelerateCoefficient * (bas - oldBas))).ToDouble();
+            return basis + (this.AccelerateCoefficient * (basis - oldBasis));
         }
 
         /// <summary>

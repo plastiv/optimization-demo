@@ -86,13 +86,13 @@ namespace Optimization.Methods.ZerothOrder
 
             double[] newBasis = startPoint;
             double[] oldBasis = startPoint;
-            mylist.Add(newBasis);
 
             while (true)
             {
+                mylist.Add(newBasis);
+
                 // Шаг 2. Осуществить исследующий поиск по выбранному координатному направлению (i)
                 newBasis = this.ExploratarySearch(newBasis);
-                mylist.Add(newBasis);
 
                 // Проверить успешность исследующего поиска:
                 if (this.func(newBasis) < this.func(oldBasis))
@@ -107,11 +107,13 @@ namespace Optimization.Methods.ZerothOrder
                     }
 
                     // Шаг 4. Провести поиск по образцу. Положить x[k + 1] = yn+l,
-                    oldBasis = newBasis;
+                    for (int i = 0; i < this.param.Dimension; i++)
+                    {
+                        oldBasis[i] = newBasis[i];
+                    }
 
                     // y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k]);
                     newBasis = this.PatternSearch(oldOldBasis, oldBasis);
-                    mylist.Add(newBasis);
                     // перейти к шагу 2.
                     continue;
                 }
@@ -133,12 +135,12 @@ namespace Optimization.Methods.ZerothOrder
                         }
 
                         newBasis = oldBasis;
-                        mylist.Add(newBasis);
                         // перейти к шагу 2.
                         continue;
                     }
                     else
                     {
+                        mylist.Add(newBasis);
                         return mylist.ToArray();
                     }
                 }

@@ -15,7 +15,6 @@
     [TestFixture(8)]
     [TestFixture(9)]
     [TestFixture(10)]
-    //[Ignore]
     class TestManyVariableMethods
     {
         private const double precision = 0.1;
@@ -74,7 +73,8 @@
             }
         }
 
-        [Test]        
+        [Test]
+        [Ignore]
         public void TestGradientMethod()
         {
             double[] result = Minimum.GradientDescent(this.task.function, 2, this.task.startPoint);
@@ -92,7 +92,6 @@
         }
 
         [Test]
-        [Ignore]
         public void TestHookeJeveesMethod()
         {
             double[] result = Minimum.HookeJevees(this.task.function, 2, this.task.startPoint);

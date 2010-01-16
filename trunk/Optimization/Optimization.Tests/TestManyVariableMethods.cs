@@ -92,11 +92,20 @@
         }
 
         [Test]
+        [Ignore]
         public void TestHookeJeveesMethod()
         {
             double[] result = Minimum.HookeJevees(this.task.function, 2, this.task.startPoint);
             Assert.AreEqual(this.task.exactSolution[0], result[0], precision);
             Assert.AreEqual(this.task.exactSolution[1], result[1], precision);
+        }
+
+        [Test]
+        public void TestHookeJeveesExtendedMethod()
+        {
+            double[][] result = Minimum.HookeJeveesExtended(this.task.function, 2, this.task.startPoint);
+            Assert.AreEqual(this.task.exactSolution[0], result[result.Length-1][0], precision);
+            Assert.AreEqual(this.task.exactSolution[1], result[result.Length-1][0], precision);
         }
 
         [Test]

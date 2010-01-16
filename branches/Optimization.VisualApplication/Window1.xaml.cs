@@ -1,15 +1,10 @@
-﻿using System.Windows;
-using System.Windows.Media;
-using Microsoft.Research.DynamicDataDisplay.Charts.Shapes;
-using Microsoft.Research.DynamicDataDisplay.Common.Auxiliary;
-using Microsoft.Research.DynamicDataDisplay.DataSources.MultiDimensional;
-using Microsoft.Research.DynamicDataDisplay.PointMarkers;
-using Optimization.Tests.Tasks;
+﻿using System.Collections.Generic;
+using System.Windows;
 using Microsoft.Research.DynamicDataDisplay.Charts;
 using Microsoft.Research.DynamicDataDisplay.Charts.Navigation;
-using System.Windows.Documents;
-using System.Collections.Generic;
-using Microsoft.Research.DynamicDataDisplay;
+using Microsoft.Research.DynamicDataDisplay.Common.Auxiliary;
+using Microsoft.Research.DynamicDataDisplay.DataSources.MultiDimensional;
+using Optimization.Tests.Tasks;
 
 namespace Optimization.VisualApplication
 {
@@ -67,19 +62,16 @@ namespace Optimization.VisualApplication
             txtFunction.Text = selectedTask.expression;
             txtX1.Text = selectedTask.startPoint[0].ToString();
             txtX2.Text = selectedTask.startPoint[1].ToString();
+
             warpedDataSource2D = IsolineSource.GetWarpedDataSource2D(selectedTask.function, minValue, maxValue, pointCount);
             isolineGraph.DataSource = warpedDataSource2D;
-            trackingGraph = new IsolineTrackingGraph(); // TODO: Lazy initialization.
-            trackingGraph.DataSource = warpedDataSource2D;
-            Rect visible = warpedDataSource2D.GetGridBounds();
-            plotter.Viewport.Visible = visible;
+            plotter.Viewport.Visible = warpedDataSource2D.GetGridBounds();
         }
 
         private void btnAddLine_Click(object sender, RoutedEventArgs e)
         {
             MethodLine tempMethodLine = new MethodLine((ManyVariableFunctionTask)cmbFunctions.SelectedItem,cmbMethods.SelectedItem,new double[2] { double.Parse(txtX1.Text), double.Parse(txtX2.Text) });
             methodLines.Enqueue(tempMethodLine);
-
             plotter.AddChild(tempMethodLine.ViewpontPolyline);
         }
 
@@ -105,6 +97,8 @@ namespace Optimization.VisualApplication
         {
             if (chkTrackingGraph.IsChecked == true)
             {
+                trackingGraph = new IsolineTrackingGraph(); // TODO: Lazy initialization.
+                trackingGraph.DataSource = warpedDataSource2D;
                 plotter.AddChild(trackingGraph);
             }
             else

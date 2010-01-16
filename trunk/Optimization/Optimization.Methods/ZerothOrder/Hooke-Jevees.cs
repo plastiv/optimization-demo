@@ -202,34 +202,6 @@ namespace Optimization.Methods.ZerothOrder
             return result;
         }
 
-        private double[] ExploratarySearchExtended(double[] point)
-        {
-            for (int i = 0; i < this.Dimension; i++)
-            {
-                if (this.Function(this.GetPositiveProbe(point, i)) < this.Function(point))
-                {
-                    // шаг считается удачным
-                    point = this.GetPositiveProbe(point, i);
-                }
-                else
-                {
-                    // шаг неудачен, делаем шаг в противоположном направлении
-                    if (this.Function(this.GetNegativeProbe(point, i)) < this.Function(point))
-                    {
-                        // шаг в противоположном направлении считается удачным
-                        point = this.GetNegativeProbe(point, i);
-                    }
-                    else
-                    {
-                        // оба шага неудачны
-                        // y[i + 1] = y[i];
-                    }
-                }
-            }
-
-            return point;
-        }
-
         /// <summary>
         /// Пробный шаг в положительном направлении.
         /// </summary>

@@ -9,7 +9,6 @@ namespace Optimization.Methods.ZerothOrder
 {
     using System.Diagnostics;
     using Optimization.Methods;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Нахождение безусловного минимума функции многих переменных методом Хука-Дживса
@@ -20,12 +19,22 @@ namespace Optimization.Methods.ZerothOrder
         /// <summary>
         /// Ссылка на функциональную зависимость.
         /// </summary>
-        private readonly ManyVariable func;
+        private readonly ManyVariable Function;
 
         /// <summary>
-        /// Параметры метода.
+        /// Количество перменных
         /// </summary>
-        private readonly MethodParams param;
+        private readonly int Dimension;
+
+        /// <summary>
+        /// ускоряющий множитель lyamda > 0
+        /// </summary>
+        private readonly double AccelerateCoefficient;
+
+        /// <summary>
+        /// коэффициент уменьшения шага аlfa > 1.
+        /// </summary>
+        private readonly double CoefficientReduction;
 
         /// <summary>
         /// Значение шага по каждой из координат.
@@ -39,16 +48,18 @@ namespace Optimization.Methods.ZerothOrder
         /// </summary>
         /// <param name="inputFunc">The input function.</param>
         /// <param name="inputParams">The input method parameters.</param>
-        public Hooke_Jevees(ManyVariable inputFunc, MethodParams inputParams)
+        public Hooke_Jevees(ManyVariable inputFunc,int dimension, double accelerateCoefficient,double coefficientReduction,double[] step)
         {
-            Debug.Assert(inputParams.AccelerateCoefficient > 0, "Accelerate coefficient lyamda is unexepectedly less or equal zero");
-            Debug.Assert(inputParams.CoefficientReduction > 1, "Coefficient reduction alfa is unexepectedly less or equal 1");
-            Debug.Assert(inputParams.Dimension > 1, "Dimension is unexepectedly less or equal 1");
-            this.param = inputParams;
-            this.step = inputParams.Step;
+            Debug.Assert(accelerateCoefficient > 0, "Accelerate coefficient lyamda is unexepectedly less or equal zero");
+            Debug.Assert(coefficientReduction > 1, "Coefficient reduction alfa is unexepectedly less or equal 1");
+            Debug.Assert(dimension > 1, "Dimension is unexepectedly less or equal 1");
+            this.AccelerateCoefficient = accelerateCoefficient;
+            this.CoefficientReduction = coefficientReduction;
+            this.step = step;
 
             Debug.Assert(inputFunc != null, "Input function reference is unexepectedly null");
-            this.func = inputFunc;
+            this.Function = inputFunc;
+            this.Dimension = dimension;
         }
 
         /// <summary>
@@ -58,10 +69,10 @@ namespace Optimization.Methods.ZerothOrder
         /// <param name="funcDimension">Количество переменных.</param>
         public Hooke_Jevees(ManyVariable inputFunc, int funcDimension)
         {
-            this.func = inputFunc;
-            this.param.AccelerateCoefficient = 1.5;
-            this.param.CoefficientReduction = 4;
-            this.param.Dimension = funcDimension;
+            this.Function = inputFunc;
+            this.AccelerateCoefficient = 1.5;
+            this.CoefficientReduction = 4;
+            this.Dimension = funcDimension;
             this.step = new double[funcDimension];
             for (int i = 0; i < funcDimension; i++)
             {
@@ -92,21 +103,24 @@ namespace Optimization.Methods.ZerothOrder
                 newBasis = this.ExploratarySearch(newBasis);
 
                 // Проверить успешность исследующего поиска:
-                if (this.func(newBasis) < this.func(oldBasis))
+                if (this.Function(newBasis) < this.Function(oldBasis))
                 {
                     // перейти к шагу 4;
 
                     // Сформируем х[k]
-                    double[] oldOldBasis = new double[this.param.Dimension];
-                    for (int i = 0; i < this.param.Dimension; i++)
+                    double[] oldOldBasis = new double[this.Dimension];
+                    for (int i = 0; i < this.Dimension; i++)
                     {
                         oldOldBasis[i] = oldBasis[i];
                     }
 
                     // Шаг 4. Провести поиск по образцу. Положить x[k + 1] = yn+l,
-                    oldBasis = newBasis;
+                    for (int i = 0; i < this.Dimension; i++)
+                    {
+                        oldBasis[i] = newBasis[i];
+                    }
 
-                    // y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k]);
+                    // y[0] = x[k + 1] + AccelerateCoefficient * (x[k + 1] - x[k]);
                     newBasis = this.PatternSearch(oldOldBasis, oldBasis);
 
                     // перейти к шагу 2.
@@ -119,17 +133,20 @@ namespace Optimization.Methods.ZerothOrder
                     // Шаг 5. Проверить условие окончания:
                     if (!this.AllStepsLessPrecision(precision))
                     {
-                        for (int index = 0; index < this.param.Dimension; index++)
+                        for (int index = 0; index < this.Dimension; index++)
                         {
                             // Для значений шагов, больших точности
                             if (this.step[index] > precision)
                             {
                                 // Уменьшить величину шага
-                                this.step[index] /= this.param.CoefficientReduction;
+                                this.step[index] /= this.CoefficientReduction;
                             }
                         }
 
-                        newBasis = oldBasis;
+                        for (int i = 0; i < this.Dimension; i++)
+                        {
+                            newBasis[i] = oldBasis[i];
+                        }
 
                         // перейти к шагу 2.
                         continue;
@@ -139,109 +156,6 @@ namespace Optimization.Methods.ZerothOrder
                         // Значение всех шагов меньше точности
                         // Поиск закончен
                         return oldBasis;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the minimum.
-        /// </summary>
-        /// <param name="startPoint">The start point.</param>
-        /// <param name="precision">The precision.</param>
-        /// <returns>Вектор значений х, при котором функция достигает минимума.</returns>
-        internal double[][] GetMinimumExtended(double[] startPoint, double precision)
-        {
-            // Шаг 1. Задать начальную точку л:0
-            // число е>0 для остановки алгоритма
-            Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
-            List<double[]> mylist = new List<double[]>();
-            // MAGIC KEY
-            //int count = 40;
-            //int solIndex = 0;
-            //double[][] sols = new double[count][];
-            //for (int i = 0; i < count; i++)
-            //{
-            //    sols[i] = new double[this.param.Dimension];
-            //}
-
-            double[] newBasis = startPoint;
-            double[] oldBasis = startPoint;
-            mylist.Add(newBasis);
-
-            while (true)
-            {
-                //for (int i = 0; i < this.param.Dimension; i++)
-                //{
-                //    sols[solIndex][i] = newBasis[i];
-                //}
-
-                //solIndex++;
-                
-
-                // Шаг 2. Осуществить исследующий поиск по выбранному координатному направлению (i)
-                newBasis = this.ExploratarySearch(newBasis);
-                mylist.Add(newBasis);
-
-                // Проверить успешность исследующего поиска:
-                if (this.func(newBasis) < this.func(oldBasis))
-                {
-                    // перейти к шагу 4;
-
-                    // Сформируем х[k]
-                    double[] oldOldBasis = new double[this.param.Dimension];
-                    for (int i = 0; i < this.param.Dimension; i++)
-                    {
-                        oldOldBasis[i] = oldBasis[i];
-                    }
-
-                    // Шаг 4. Провести поиск по образцу. Положить x[k + 1] = yn+l,
-                    oldBasis = newBasis;
-
-                    // y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k]);
-                    newBasis = this.PatternSearch(oldOldBasis, oldBasis);
-                    mylist.Add(newBasis);
-                    // перейти к шагу 2.
-                    continue;
-                }
-                else
-                {
-                    // перейти к шагу 5.
-
-                    // Шаг 5. Проверить условие окончания:
-                    if (!this.AllStepsLessPrecision(precision))
-                    {
-                        for (int index = 0; index < this.param.Dimension; index++)
-                        {
-                            // Для значений шагов, больших точности
-                            if (this.step[index] > precision)
-                            {
-                                // Уменьшить величину шага
-                                this.step[index] /= this.param.CoefficientReduction;
-                            }
-                        }
-
-                        newBasis = oldBasis;
-                        mylist.Add(newBasis);
-                        //solIndex--;
-                        // перейти к шагу 2.
-                        continue;
-                    }
-                    else
-                    {
-                        // Значение всех шагов меньше точности
-                        // Поиск закончен
-                        //double[][] newResult = new double[solIndex][];
-                        //for (int i = 0; i < solIndex; i++)
-                        //{
-                        //    newResult[i] = new double[this.param.Dimension];
-                        //    for (int j = 0; j < this.param.Dimension; j++)
-                        //    {
-                        //        newResult[i][j] = sols[i][j];
-                        //    }
-                        //}
-                        
-                        return mylist.ToArray();
                     }
                 }
             }
@@ -256,9 +170,9 @@ namespace Optimization.Methods.ZerothOrder
         /// <returns>Новую точку.</returns>
         private double[] ExploratarySearch(double[] point)
         {
-            for (int i = 0; i < this.param.Dimension; i++)
+            for (int i = 0; i < this.Dimension; i++)
             {
-                if (this.func(this.GetPositiveProbe(point, i)) < this.func(point))
+                if (this.Function(this.GetPositiveProbe(point, i)) < this.Function(point))
                 {
                     // шаг считается удачным
                     point = this.GetPositiveProbe(point, i);
@@ -266,7 +180,7 @@ namespace Optimization.Methods.ZerothOrder
                 else
                 {
                     // шаг неудачен, делаем шаг в противоположном направлении
-                    if (this.func(this.GetNegativeProbe(point, i)) < this.func(point))
+                    if (this.Function(this.GetNegativeProbe(point, i)) < this.Function(point))
                     {
                         // шаг в противоположном направлении считается удачным
                         point = this.GetNegativeProbe(point, i);
@@ -284,9 +198,9 @@ namespace Optimization.Methods.ZerothOrder
 
         private double[] ExploratarySearchExtended(double[] point)
         {
-            for (int i = 0; i < this.param.Dimension; i++)
+            for (int i = 0; i < this.Dimension; i++)
             {
-                if (this.func(this.GetPositiveProbe(point, i)) < this.func(point))
+                if (this.Function(this.GetPositiveProbe(point, i)) < this.Function(point))
                 {
                     // шаг считается удачным
                     point = this.GetPositiveProbe(point, i);
@@ -294,7 +208,7 @@ namespace Optimization.Methods.ZerothOrder
                 else
                 {
                     // шаг неудачен, делаем шаг в противоположном направлении
-                    if (this.func(this.GetNegativeProbe(point, i)) < this.func(point))
+                    if (this.Function(this.GetNegativeProbe(point, i)) < this.Function(point))
                     {
                         // шаг в противоположном направлении считается удачным
                         point = this.GetNegativeProbe(point, i);
@@ -318,8 +232,8 @@ namespace Optimization.Methods.ZerothOrder
         /// <returns>Новую точку.</returns>
         private double[] GetPositiveProbe(double[] point, int i)
         {
-            double[] solution = new double[this.param.Dimension];
-            for (int j = 0; j < this.param.Dimension; j++)
+            double[] solution = new double[this.Dimension];
+            for (int j = 0; j < this.Dimension; j++)
             {
                 solution[j] = point[j];
             }
@@ -336,8 +250,8 @@ namespace Optimization.Methods.ZerothOrder
         /// <returns>Новую точку.</returns>
         private double[] GetNegativeProbe(double[] point, int i)
         {
-            double[] solution = new double[this.param.Dimension];
-            for (int j = 0; j < this.param.Dimension; j++)
+            double[] solution = new double[this.Dimension];
+            for (int j = 0; j < this.Dimension; j++)
             {
                 solution[j] = point[j];
             }
@@ -347,17 +261,17 @@ namespace Optimization.Methods.ZerothOrder
         }
 
         /// <summary>
-        /// Поиск по образцу. y[0] = x[k + 1] + param.AccelerateCoefficient * (x[k + 1] - x[k])
+        /// Поиск по образцу. y[0] = x[k + 1] + AccelerateCoefficient * (x[k + 1] - x[k])
         /// </summary>
         /// <param name="oldBasis">The old basis.</param>
         /// <param name="basis">The basis.</param>
         /// <returns>Новую точку.</returns>
         private double[] PatternSearch(double[] oldBasis, double[] basis)
         {
-            double[] solution = new double[this.param.Dimension];
-            for (int index = 0; index < this.param.Dimension; index++)
+            double[] solution = new double[this.Dimension];
+            for (int index = 0; index < this.Dimension; index++)
             {
-                solution[index] = basis[index] + (this.param.AccelerateCoefficient * (basis[index] - oldBasis[index]));
+                solution[index] = basis[index] + (this.AccelerateCoefficient * (basis[index] - oldBasis[index]));
             }
 
             return solution;
@@ -370,7 +284,7 @@ namespace Optimization.Methods.ZerothOrder
         /// <returns>True, если все</returns>
         private bool AllStepsLessPrecision(double precision)
         {
-            for (int index = 0; index < this.param.Dimension; index++)
+            for (int index = 0; index < this.Dimension; index++)
             {
                 if (this.step[index] > precision)
                 {
@@ -383,31 +297,7 @@ namespace Optimization.Methods.ZerothOrder
         #endregion
 
         #region Structs
-        /// <summary>
-        /// Параметры метода.
-        /// </summary>
-        internal struct MethodParams
-        {
-            /// <summary>
-            /// начальные величины шагов по координатным направлениям di,...,dn > 0
-            /// </summary>
-            public double[] Step;
 
-            /// <summary>
-            /// Количество перменных
-            /// </summary>
-            public int Dimension;
-
-            /// <summary>
-            /// ускоряющий множитель lyamda > 0
-            /// </summary>
-            public double AccelerateCoefficient;
-
-            /// <summary>
-            /// коэффициент уменьшения шага аlfa > 1.
-            /// </summary>
-            public double CoefficientReduction;
-        }
         #endregion
     }
 }

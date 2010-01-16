@@ -74,12 +74,27 @@
         }
 
         [Test]
-        [Ignore]
         public void TestGradientMethod()
         {
             double[] result = Minimum.GradientDescent(this.task.function, 2, this.task.startPoint);
             Assert.AreEqual(this.task.exactSolution[0], result[0], precision);
             Assert.AreEqual(this.task.exactSolution[1], result[1], precision);
+        }
+
+        [Test]
+        public void TestGradientExtendedMethodLastPoint()
+        {
+            double[][] result = Minimum.GradientDescentExtended(this.task.function, 2, this.task.startPoint);
+            Assert.AreEqual(this.task.exactSolution[0], result[result.Length - 1][0], precision);
+            Assert.AreEqual(this.task.exactSolution[1], result[result.Length - 1][1], precision);
+        }
+
+        [Test]
+        public void TestGradientExtendedMethodFirstPoint()
+        {
+            double[][] result = Minimum.GradientDescentExtended(this.task.function, 2, this.task.startPoint);
+            Assert.AreEqual(this.task.startPoint[0], result[0][0]);
+            Assert.AreEqual(this.task.startPoint[1], result[0][1]);
         }
 
         [Test]
@@ -101,14 +116,16 @@
         }
 
         [Test]
+        [Ignore]
         public void TestHookeJeveesExtendedMethodLastPoint()
         {
             double[][] result = Minimum.HookeJeveesExtended(this.task.function, 2, this.task.startPoint);
-            Assert.AreEqual(this.task.exactSolution[0], result[result.Length-1][0], precision);
-            Assert.AreEqual(this.task.exactSolution[1], result[result.Length-1][1], precision);
+            Assert.AreEqual(this.task.exactSolution[0], result[result.Length - 1][0], precision);
+            Assert.AreEqual(this.task.exactSolution[1], result[result.Length - 1][1], precision);
         }
 
         [Test]
+        [Ignore]
         public void TestHookeJeveesExtendedMethodFirstPoint()
         {
             double[][] result = Minimum.HookeJeveesExtended(this.task.function, 2, this.task.startPoint);

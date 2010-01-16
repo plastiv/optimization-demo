@@ -67,7 +67,7 @@ namespace Optimization.Methods.ZerothOrder
 
             while (true)
             {
-                listPoinns.Add(newBasis);
+                listPoinns.Add(new Point(oldBasis.ToDouble()));
 
                 // Шаг 2. Осуществить исследующий поиск по выбранному координатному направлению (i)
                 newBasis = this.ExploratarySearch(newBasis);

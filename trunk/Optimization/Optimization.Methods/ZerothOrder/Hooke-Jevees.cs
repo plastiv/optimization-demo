@@ -48,7 +48,7 @@ namespace Optimization.Methods.ZerothOrder
         /// </summary>
         /// <param name="inputFunc">The input function.</param>
         /// <param name="inputParams">The input method parameters.</param>
-        public Hooke_Jevees(ManyVariable inputFunc,int dimension, double accelerateCoefficient,double coefficientReduction,double[] step)
+        public Hooke_Jevees(ManyVariable inputFunc, int dimension, double accelerateCoefficient, double coefficientReduction, double[] step)
         {
             Debug.Assert(accelerateCoefficient > 0, "Accelerate coefficient lyamda is unexepectedly less or equal zero");
             Debug.Assert(coefficientReduction > 1, "Coefficient reduction alfa is unexepectedly less or equal 1");
@@ -170,26 +170,22 @@ namespace Optimization.Methods.ZerothOrder
         /// <returns>Новую точку.</returns>
         private double[] ExploratarySearch(double[] point)
         {
-            double[] result = new double[this.Dimension];
-            for (int i = 0; i < this.Dimension; i++)
-            {
-                result[i] = point[i];
-            }
+            Point result = new Point(point);
 
             for (int i = 0; i < this.Dimension; i++)
             {
-                if (this.Function(this.GetPositiveProbe(result, i)) < this.Function(result))
+                if (this.Function(this.GetPositiveProbe(result.ToDouble(), i)) < this.Function(result.ToDouble()))
                 {
                     // шаг считается удачным
-                    result = this.GetPositiveProbe(result, i);
+                    result = new Point(this.GetPositiveProbe(result.ToDouble(), i));
                 }
                 else
                 {
                     // шаг неудачен, делаем шаг в противоположном направлении
-                    if (this.Function(this.GetNegativeProbe(result, i)) < this.Function(result))
+                    if (this.Function(this.GetNegativeProbe(result.ToDouble(), i)) < this.Function(result.ToDouble()))
                     {
                         // шаг в противоположном направлении считается удачным
-                        result = this.GetNegativeProbe(result, i);
+                        result = new Point(this.GetNegativeProbe(result.ToDouble(), i));
                     }
                     else
                     {
@@ -199,7 +195,7 @@ namespace Optimization.Methods.ZerothOrder
                 }
             }
 
-            return result;
+            return result.ToDouble();
         }
 
         /// <summary>

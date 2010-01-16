@@ -83,14 +83,6 @@ namespace Optimization.Methods.ZerothOrder
             // число е>0 для остановки алгоритма
             Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
             List<double[]> mylist = new List<double[]>();
-            // MAGIC KEY
-            //int count = 40;
-            //int solIndex = 0;
-            //double[][] sols = new double[count][];
-            //for (int i = 0; i < count; i++)
-            //{
-            //    sols[i] = new double[this.param.Dimension];
-            //}
 
             double[] newBasis = startPoint;
             double[] oldBasis = startPoint;
@@ -98,14 +90,6 @@ namespace Optimization.Methods.ZerothOrder
 
             while (true)
             {
-                //for (int i = 0; i < this.param.Dimension; i++)
-                //{
-                //    sols[solIndex][i] = newBasis[i];
-                //}
-
-                //solIndex++;
-                
-
                 // Шаг 2. Осуществить исследующий поиск по выбранному координатному направлению (i)
                 newBasis = this.ExploratarySearch(newBasis);
                 mylist.Add(newBasis);
@@ -150,24 +134,11 @@ namespace Optimization.Methods.ZerothOrder
 
                         newBasis = oldBasis;
                         mylist.Add(newBasis);
-                        //solIndex--;
                         // перейти к шагу 2.
                         continue;
                     }
                     else
                     {
-                        // Значение всех шагов меньше точности
-                        // Поиск закончен
-                        //double[][] newResult = new double[solIndex][];
-                        //for (int i = 0; i < solIndex; i++)
-                        //{
-                        //    newResult[i] = new double[this.param.Dimension];
-                        //    for (int j = 0; j < this.param.Dimension; j++)
-                        //    {
-                        //        newResult[i][j] = sols[i][j];
-                        //    }
-                        //}
-                        
                         return mylist.ToArray();
                     }
                 }

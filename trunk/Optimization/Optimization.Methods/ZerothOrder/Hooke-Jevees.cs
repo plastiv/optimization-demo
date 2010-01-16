@@ -210,12 +210,8 @@ namespace Optimization.Methods.ZerothOrder
         /// <returns>Новую точку.</returns>
         private double[] GetPositiveProbe(double[] point, int i)
         {
-            double[] solution = new double[this.Dimension];
-            for (int j = 0; j < this.Dimension; j++)
-            {
-                solution[j] = point[j];
-            }
-
+            Point ptPoint = new Point(point);
+            double[] solution = ptPoint.ToDouble();
             solution[i] += this.step[i];
             return solution;
         }
@@ -228,12 +224,8 @@ namespace Optimization.Methods.ZerothOrder
         /// <returns>Новую точку.</returns>
         private double[] GetNegativeProbe(double[] point, int i)
         {
-            double[] solution = new double[this.Dimension];
-            for (int j = 0; j < this.Dimension; j++)
-            {
-                solution[j] = point[j];
-            }
-
+            Point ptPoint = new Point(point);
+            double[] solution = ptPoint.ToDouble();
             solution[i] -= this.step[i];
             return solution;
         }

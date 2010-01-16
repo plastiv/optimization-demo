@@ -24,22 +24,22 @@ namespace Optimization.Methods.ZerothOrder
         /// <summary>
         /// Количество перменных
         /// </summary>
-        private readonly int Dimension;
+        protected internal readonly int Dimension;
 
         /// <summary>
         /// ускоряющий множитель lyamda > 0
         /// </summary>
-        private readonly double AccelerateCoefficient;
+        protected internal readonly double AccelerateCoefficient;
 
         /// <summary>
         /// коэффициент уменьшения шага аlfa > 1.
         /// </summary>
-        private readonly double CoefficientReduction;
+        protected internal readonly double CoefficientReduction;
 
         /// <summary>
         /// Значение шага по каждой из координат.
         /// </summary>
-        private double[] step;
+        protected internal double[] step;
         #endregion
 
         #region Constructors
@@ -156,7 +156,7 @@ namespace Optimization.Methods.ZerothOrder
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>Новую точку.</returns>
-        private Point ExploratarySearch(Point point)
+        protected internal Point ExploratarySearch(Point point)
         {
             Point result = new Point(point.ToDouble());
 
@@ -191,7 +191,7 @@ namespace Optimization.Methods.ZerothOrder
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>Значение функции в точке.</returns>
-        private double GetFuncValue(Point point)
+        protected internal double GetFuncValue(Point point)
         {
             return this.Function(point.ToDouble());
         }
@@ -202,7 +202,7 @@ namespace Optimization.Methods.ZerothOrder
         /// <param name="point">The point.</param>
         /// <param name="i">Координата, по которой делаем шаг.</param>
         /// <returns>Новую точку.</returns>
-        private Point GetPositiveProbe(Point point, int i)
+        protected internal Point GetPositiveProbe(Point point, int i)
         {
             // TODO: Разобраться почему обязательно нужно чтобы был новый массив даблов в возращаемой Point, иначе данные сбиваются!
             // Потому что два раза вычисляется эта функция : сначала для проверки буля, а затем для присвоения, поэтому если буль не выдает тру , то значения все равно изменены.
@@ -217,7 +217,7 @@ namespace Optimization.Methods.ZerothOrder
         /// <param name="point">The point.</param>
         /// <param name="i">Координата, по которой делаем шаг.</param>
         /// <returns>Новую точку.</returns>
-        private Point GetNegativeProbe(Point point, int i)
+        protected internal Point GetNegativeProbe(Point point, int i)
         {
             double[] solution = new Point(point.ToDouble()).ToDouble();
             solution[i] -= this.step[i];
@@ -230,7 +230,7 @@ namespace Optimization.Methods.ZerothOrder
         /// <param name="oldBasis">The old basis.</param>
         /// <param name="basis">The basis.</param>
         /// <returns>Новую точку.</returns>
-        private Point PatternSearch(Point oldBasis, Point basis)
+        protected internal Point PatternSearch(Point oldBasis, Point basis)
         {
             return basis + (this.AccelerateCoefficient * (basis - oldBasis));
         }
@@ -240,7 +240,7 @@ namespace Optimization.Methods.ZerothOrder
         /// </summary>
         /// <param name="precision">The precision.</param>
         /// <returns>True, если все</returns>
-        private bool AllStepsLessPrecision(double precision)
+        protected internal bool AllStepsLessPrecision(double precision)
         {
             for (int index = 0; index < this.Dimension; index++)
             {

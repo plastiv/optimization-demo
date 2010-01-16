@@ -31,6 +31,16 @@ namespace Optimization.VisualApplication
         #endregion
 
         #region Properties
+        internal ManyVariable Function
+        {
+            get { return function; }
+        } 
+
+        internal double[][] Solutions
+        {
+            get { return solutions; }
+        }
+
         internal int PointsCount
         {
             get { return pointsCount; }

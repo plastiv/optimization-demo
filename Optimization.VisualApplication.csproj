@@ -80,6 +80,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Report.cs" />
     <Compile Include="IsolineSource.cs" />
     <Compile Include="LineSource.cs" />
     <Compile Include="MethodLine.cs" />

@@ -14,6 +14,9 @@ namespace Optimization.VisualApplication
     using Microsoft.Research.DynamicDataDisplay.Common.Auxiliary;
     using Microsoft.Research.DynamicDataDisplay.DataSources.MultiDimensional;
     using Optimization.Tests.Tasks;
+    using System.Collections.ObjectModel;
+    using System.Windows.Controls;
+    using System.Windows.Data;
 
     /// <summary>
     /// Interaction logic for Window1.xaml
@@ -73,6 +76,37 @@ namespace Optimization.VisualApplication
             cmbFunctions.Items.Add(new ManyVariableFunctionTask8());
             cmbFunctions.Items.Add(new ManyVariableFunctionTask9());
             cmbFunctions.Items.Add(new ManyVariableFunctionTask10());
+
+            SetDataToListView();
+        }
+
+        private void SetDataToListView()
+        {
+            GridView myGridView = new GridView();
+
+            GridViewColumn gvc1 = new GridViewColumn();
+            gvc1.DisplayMemberBinding = new Binding("Iteration");
+            gvc1.Header = "Iteration";
+            gvc1.Width = 50;
+            myGridView.Columns.Add(gvc1);
+            GridViewColumn gvc2 = new GridViewColumn();
+            gvc2.DisplayMemberBinding = new Binding("PointX");
+            gvc2.Header = "Point X";
+            gvc2.Width = 150;
+            myGridView.Columns.Add(gvc2);
+            GridViewColumn gvc3 = new GridViewColumn();
+            gvc3.DisplayMemberBinding = new Binding("PointY");
+            gvc3.Header = "Point Y";
+            gvc3.Width = 150;
+            myGridView.Columns.Add(gvc3);
+            GridViewColumn gvc4 = new GridViewColumn();
+            gvc4.DisplayMemberBinding = new Binding("FuncValue");
+            gvc4.Header = "Func Value";
+            gvc4.Width = 150;
+            myGridView.Columns.Add(gvc4);
+
+            //ItemsSource is ObservableCollection of EmployeeInfo objects
+            listView.View = myGridView;
         }
 
         private void cmbFunctions_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -97,6 +131,8 @@ namespace Optimization.VisualApplication
             MethodLine tempMethodLine = new MethodLine((ManyVariableFunctionTask)cmbFunctions.SelectedItem, cmbMethods.SelectedItem, new double[2] { double.Parse(txtX1.Text), double.Parse(txtX2.Text) });
             methodLines.Enqueue(tempMethodLine);
             plotter.AddChild(tempMethodLine.ViewpontPolyline);
+
+            listView.ItemsSource = tempMethodLine.GetReports();
         }
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)

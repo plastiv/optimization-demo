@@ -1,28 +1,42 @@
-﻿using System.Collections.Generic;
-using System.Windows;
-using Microsoft.Research.DynamicDataDisplay.Charts;
-using Microsoft.Research.DynamicDataDisplay.Charts.Navigation;
-using Microsoft.Research.DynamicDataDisplay.Common.Auxiliary;
-using Microsoft.Research.DynamicDataDisplay.DataSources.MultiDimensional;
-using Optimization.Tests.Tasks;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Window1.xaml.cs" company="Home Corporation">
+//     Copyright (c) Home Corporation 2010. All rights reserved.
+// </copyright>
+// <author>Sergii Pechenizkyi</author>
+//-----------------------------------------------------------------------
 
 namespace Optimization.VisualApplication
 {
+    using System.Collections.Generic;
+    using System.Windows;
+    using Microsoft.Research.DynamicDataDisplay.Charts;
+    using Microsoft.Research.DynamicDataDisplay.Charts.Navigation;
+    using Microsoft.Research.DynamicDataDisplay.Common.Auxiliary;
+    using Microsoft.Research.DynamicDataDisplay.DataSources.MultiDimensional;
+    using Optimization.Tests.Tasks;
+
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
     public partial class Window1 : Window
     {
-        readonly private int minValue = Optimization.VisualApplication.Properties.Settings.Default.MinValue;
-        readonly private int maxValue = Optimization.VisualApplication.Properties.Settings.Default.MaxValue;
-        readonly private int pointCount = Optimization.VisualApplication.Properties.Settings.Default.PointCount;
+        #region Public Fields
 
-        WarpedDataSource2D<double> warpedDataSource2D;
+        #endregion
 
-        Queue<MethodLine> methodLines;
-        IsolineTrackingGraph trackingGraph;
-        CursorCoordinateGraph cursorCoordinateGraph;
+        #region Private Fields
+        private readonly int minValue = Optimization.VisualApplication.Properties.Settings.Default.MinValue;
+        private readonly int maxValue = Optimization.VisualApplication.Properties.Settings.Default.MaxValue;
+        private readonly int pointCount = Optimization.VisualApplication.Properties.Settings.Default.PointCount;
 
+        private WarpedDataSource2D<double> warpedDataSource2D;
+
+        private Queue<MethodLine> methodLines;
+        private IsolineTrackingGraph trackingGraph;
+        private CursorCoordinateGraph cursorCoordinateGraph;
+        #endregion
+
+        #region Constructors
         public Window1()
         {
             InitializeComponent();
@@ -32,7 +46,17 @@ namespace Optimization.VisualApplication
 
             Loaded += new RoutedEventHandler(Window1_Loaded);
         }
+        #endregion
 
+        #region Properties
+
+        #endregion
+
+        #region Public Methods
+
+        #endregion
+
+        #region Private Methods
         private void Window1_Loaded(object sender, RoutedEventArgs e)
         {
             cmbMethods.Items.Add(LineSource.Methods.Gradient);
@@ -70,7 +94,7 @@ namespace Optimization.VisualApplication
 
         private void btnAddLine_Click(object sender, RoutedEventArgs e)
         {
-            MethodLine tempMethodLine = new MethodLine((ManyVariableFunctionTask)cmbFunctions.SelectedItem,cmbMethods.SelectedItem,new double[2] { double.Parse(txtX1.Text), double.Parse(txtX2.Text) });
+            MethodLine tempMethodLine = new MethodLine((ManyVariableFunctionTask)cmbFunctions.SelectedItem, cmbMethods.SelectedItem, new double[2] { double.Parse(txtX1.Text), double.Parse(txtX2.Text) });
             methodLines.Enqueue(tempMethodLine);
             plotter.AddChild(tempMethodLine.ViewpontPolyline);
         }
@@ -121,9 +145,12 @@ namespace Optimization.VisualApplication
 
         private void MenuItemIsoline_Click(object sender, RoutedEventArgs e)
         {
-
             MessageBox.Show("Menu item clicked");
-
         }
+        #endregion
+
+        #region Structs
+
+        #endregion
     }
 }

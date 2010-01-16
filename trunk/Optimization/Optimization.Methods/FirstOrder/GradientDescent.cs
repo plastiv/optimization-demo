@@ -16,41 +16,41 @@ namespace Optimization.Methods.FirstOrder
     /// </summary>
     internal class GradientDescent
     {
-        #region Private Fields
+        #region protected internal Fields
         /// <summary>
         /// Искомая функция.
         /// </summary>
-        private readonly ManyVariable SearchFunc;
+        protected internal readonly ManyVariable SearchFunc;
 
         /// <summary>
         /// Первая производная искомой функции.
         /// </summary>
-        private readonly Gradient SearchGradient;
+        protected internal readonly Gradient SearchGradient;
 
         /// <summary>
         /// Количество переменных в минимизируемом уравнении.
         /// </summary>
-        private readonly int Dimension;
+        protected internal readonly int Dimension;
 
         /// <summary>
         /// Малое положительное число, ограничивающее евклидову норму градиента. 
         /// </summary>
-        private readonly double Epsilon1;
+        protected internal readonly double Epsilon1;
 
         /// <summary>
         /// Малое положительное число, ограничивающее евклидову норму градиента. 
         /// </summary>
-        private readonly double Epsilon2;
+        protected internal readonly double Epsilon2;
 
         /// <summary>
         /// Максимальное число итераций для метода.
         /// </summary>
-        private readonly int IterationCount;
+        protected internal readonly int IterationCount;
 
         /// <summary>
         /// Величина шага deltax.
         /// </summary>
-        private double step;
+        protected internal double step;
         #endregion
 
         #region Constructors
@@ -148,13 +148,13 @@ namespace Optimization.Methods.FirstOrder
         }
         #endregion
 
-        #region Private Methods
+        #region protected internal Methods
         /// <summary>
         /// Gets the func value.
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>Значение функции в точке.</returns>
-        private double GetFuncValue(Point point)
+        protected internal double GetFuncValue(Point point)
         {
             return this.SearchFunc(point.ToDouble());
         }
@@ -164,7 +164,7 @@ namespace Optimization.Methods.FirstOrder
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>Значение градиента в точке.</returns>
-        private double[] GetGradientValue(Point point)
+        protected internal double[] GetGradientValue(Point point)
         {
             return this.SearchGradient(point.ToDouble());
         }
@@ -177,7 +177,7 @@ namespace Optimization.Methods.FirstOrder
         /// <returns>
         /// <c>true</c> if [is less iteration count and greater epsilon1] [the specified iteration]; otherwise, <c>false</c>.
         /// </returns>
-        private bool IsLessIterationCountAndGreaterEpsilon1(int iteration, Point curr)
+        protected internal bool IsLessIterationCountAndGreaterEpsilon1(int iteration, Point curr)
         {
             if (iteration < this.IterationCount && this.GetEuclideanNorm(this.GetGradientValue(curr)) > this.Epsilon1)
             {
@@ -198,7 +198,7 @@ namespace Optimization.Methods.FirstOrder
         /// <returns>
         /// <c>true</c> if [is less epsilon2] [the specified curr]; otherwise, <c>false</c>.
         /// </returns>
-        private bool IsLessEpsilon2(Point curr, Point prev, Point prevPrev)
+        protected internal bool IsLessEpsilon2(Point curr, Point prev, Point prevPrev)
         {
             if (this.IsLessEpsilon2(curr, prev) && this.IsLessEpsilon2(prev, prevPrev))
             {
@@ -218,7 +218,7 @@ namespace Optimization.Methods.FirstOrder
         /// <returns>
         /// <c>true</c> if the specified point1 is condition; otherwise, <c>false</c>.
         /// </returns>
-        private bool IsLessEpsilon2(Point point1, Point point2)
+        protected internal bool IsLessEpsilon2(Point point1, Point point2)
         {
             if (this.GetEuclideanNorm((point1 - point2).ToDouble()) < this.Epsilon2)
             {
@@ -242,7 +242,7 @@ namespace Optimization.Methods.FirstOrder
         /// </summary>
         /// <param name="x">Точка x для ктр рассчитывается градиент.</param>
         /// <returns>Градиент функции.</returns>
-        private double[] GetNumericalGradient(double[] x)
+        protected internal double[] GetNumericalGradient(double[] x)
         {
             const double DeltaX = 0.00001;
             double[] solution = new double[this.Dimension];
@@ -269,7 +269,7 @@ namespace Optimization.Methods.FirstOrder
         /// </summary>
         /// <param name="previousPoint">Предыдущая точка.</param>
         /// <returns>Значения х.</returns>
-        private Point GetNextPoint(Point previousPoint)
+        protected internal Point GetNextPoint(Point previousPoint)
         {
             Point gradientValue = new Point(this.SearchGradient(previousPoint.ToDouble()));
             Point nextPoint = previousPoint - (this.step * gradientValue);
@@ -288,7 +288,7 @@ namespace Optimization.Methods.FirstOrder
         /// </summary>
         /// <param name="vector">The vector.</param>
         /// <returns>Евклидова норма вектора.</returns>
-        private double GetEuclideanNorm(double[] vector)
+        protected internal double GetEuclideanNorm(double[] vector)
         {
             double eps = 0;
 

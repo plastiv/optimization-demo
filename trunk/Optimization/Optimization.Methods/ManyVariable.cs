@@ -108,8 +108,8 @@ namespace Optimization.Methods
         /// <returns>Минимум функции.</returns>
         public static double[][] HookeJeveesExtended(ManyVariable function, int dimension, double[] startingPoint)
         {
-            Hooke_Jevees hj = new Hooke_Jevees(function, dimension);
-            return hj.GetMinimumExtended(startingPoint, Precision);
+            Hooke_JeveesExtended hj = new Hooke_JeveesExtended(function, dimension);
+            return hj.GetMinimum(startingPoint, Precision);
         }
 
         /// <summary>

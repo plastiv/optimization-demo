@@ -246,13 +246,9 @@ namespace Optimization.Methods.ZerothOrder
         /// <returns>Новую точку.</returns>
         private double[] PatternSearch(double[] oldBasis, double[] basis)
         {
-            double[] solution = new double[this.Dimension];
-            for (int index = 0; index < this.Dimension; index++)
-            {
-                solution[index] = basis[index] + (this.AccelerateCoefficient * (basis[index] - oldBasis[index]));
-            }
-
-            return solution;
+            Point oldBas = new Point(oldBasis);
+            Point bas = new Point(basis);
+            return (bas + (this.AccelerateCoefficient * (bas - oldBas))).ToDouble();
         }
 
         /// <summary>

@@ -170,20 +170,26 @@ namespace Optimization.Methods.ZerothOrder
         /// <returns>Новую точку.</returns>
         private double[] ExploratarySearch(double[] point)
         {
+            double[] result = new double[this.Dimension];
             for (int i = 0; i < this.Dimension; i++)
             {
-                if (this.Function(this.GetPositiveProbe(point, i)) < this.Function(point))
+                result[i] = point[i];
+            }
+
+            for (int i = 0; i < this.Dimension; i++)
+            {
+                if (this.Function(this.GetPositiveProbe(result, i)) < this.Function(result))
                 {
                     // шаг считается удачным
-                    point = this.GetPositiveProbe(point, i);
+                    result = this.GetPositiveProbe(result, i);
                 }
                 else
                 {
                     // шаг неудачен, делаем шаг в противоположном направлении
-                    if (this.Function(this.GetNegativeProbe(point, i)) < this.Function(point))
+                    if (this.Function(this.GetNegativeProbe(result, i)) < this.Function(result))
                     {
                         // шаг в противоположном направлении считается удачным
-                        point = this.GetNegativeProbe(point, i);
+                        result = this.GetNegativeProbe(result, i);
                     }
                     else
                     {
@@ -193,7 +199,7 @@ namespace Optimization.Methods.ZerothOrder
                 }
             }
 
-            return point;
+            return result;
         }
 
         private double[] ExploratarySearchExtended(double[] point)

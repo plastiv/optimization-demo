@@ -174,18 +174,18 @@ namespace Optimization.Methods.ZerothOrder
 
             for (int i = 0; i < this.Dimension; i++)
             {
-                if (this.Function(this.GetPositiveProbe(result.ToDouble(), i)) < this.Function(result.ToDouble()))
+                if (this.Function(this.GetPositiveProbe(result, i).ToDouble()) < this.Function(result.ToDouble()))
                 {
                     // шаг считается удачным
-                    result = new Point(this.GetPositiveProbe(result.ToDouble(), i));
+                    result = this.GetPositiveProbe(result, i);
                 }
                 else
                 {
                     // шаг неудачен, делаем шаг в противоположном направлении
-                    if (this.Function(this.GetNegativeProbe(result.ToDouble(), i)) < this.Function(result.ToDouble()))
+                    if (this.Function(this.GetNegativeProbe(result, i).ToDouble()) < this.Function(result.ToDouble()))
                     {
                         // шаг в противоположном направлении считается удачным
-                        result = new Point(this.GetNegativeProbe(result.ToDouble(), i));
+                        result = this.GetNegativeProbe(result, i);
                     }
                     else
                     {
@@ -204,12 +204,14 @@ namespace Optimization.Methods.ZerothOrder
         /// <param name="point">The point.</param>
         /// <param name="i">Координата, по которой делаем шаг.</param>
         /// <returns>Новую точку.</returns>
-        private double[] GetPositiveProbe(double[] point, int i)
+        private Point GetPositiveProbe(Point point, int i)
         {
-            Point ptPoint = new Point(point);
+            // TODO: Разобраться почему обязательно нужно чтобы был новый массив даблов в возращаемой Point, иначе данные сбиваются!
+            // Потому что два раза вычисляется эта функция : сначала для проверки буля, а затем для присвоения, поэтому если буль не выдает тру , то значения все равно изменены.
+            Point ptPoint = new Point(point.ToDouble());
             double[] solution = ptPoint.ToDouble();
             solution[i] += this.step[i];
-            return solution;
+            return new Point(solution);
         }
 
         /// <summary>
@@ -218,12 +220,13 @@ namespace Optimization.Methods.ZerothOrder
         /// <param name="point">The point.</param>
         /// <param name="i">Координата, по которой делаем шаг.</param>
         /// <returns>Новую точку.</returns>
-        private double[] GetNegativeProbe(double[] point, int i)
+        private Point GetNegativeProbe(Point point, int i)
         {
-            Point ptPoint = new Point(point);
+            // TODO: Разобраться почему обязательно нужно чтобы был новый массив даблов в возращаемой Point, иначе данные сбиваются!
+            Point ptPoint = new Point(point.ToDouble());
             double[] solution = ptPoint.ToDouble();
             solution[i] -= this.step[i];
-            return solution;
+            return new Point(solution);
         }
 
         /// <summary>

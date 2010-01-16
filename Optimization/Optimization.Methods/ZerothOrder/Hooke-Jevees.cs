@@ -47,7 +47,10 @@ namespace Optimization.Methods.ZerothOrder
         /// Initializes a new instance of the <see cref="Hooke_Jevees"/> class.
         /// </summary>
         /// <param name="inputFunc">The input function.</param>
-        /// <param name="inputParams">The input method parameters.</param>
+        /// <param name="dimension">The dimension.</param>
+        /// <param name="accelerateCoefficient">The accelerate coefficient.</param>
+        /// <param name="coefficientReduction">The coefficient reduction.</param>
+        /// <param name="step">The step value.</param>
         public Hooke_Jevees(ManyVariable inputFunc, int dimension, double accelerateCoefficient, double coefficientReduction, double[] step)
         {
             Debug.Assert(accelerateCoefficient > 0, "Accelerate coefficient lyamda is unexepectedly less or equal zero");
@@ -68,11 +71,8 @@ namespace Optimization.Methods.ZerothOrder
         /// <param name="inputFunc">The input function.</param>
         /// <param name="funcDimension">Количество переменных.</param>
         public Hooke_Jevees(ManyVariable inputFunc, int funcDimension)
+            : this(inputFunc, funcDimension, 1.5, 4, null)
         {
-            this.Function = inputFunc;
-            this.AccelerateCoefficient = 1.5;
-            this.CoefficientReduction = 4;
-            this.Dimension = funcDimension;
             this.step = new double[funcDimension];
             for (int i = 0; i < funcDimension; i++)
             {
@@ -186,6 +186,11 @@ namespace Optimization.Methods.ZerothOrder
             return result;
         }
 
+        /// <summary>
+        /// Gets the func value.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <returns>Значение функции в точке.</returns>
         private double GetFuncValue(Point point)
         {
             return this.Function(point.ToDouble());
@@ -201,8 +206,7 @@ namespace Optimization.Methods.ZerothOrder
         {
             // TODO: Разобраться почему обязательно нужно чтобы был новый массив даблов в возращаемой Point, иначе данные сбиваются!
             // Потому что два раза вычисляется эта функция : сначала для проверки буля, а затем для присвоения, поэтому если буль не выдает тру , то значения все равно изменены.
-            Point ptPoint = new Point(point.ToDouble());
-            double[] solution = ptPoint.ToDouble();
+            double[] solution = new Point(point.ToDouble()).ToDouble();
             solution[i] += this.step[i];
             return new Point(solution);
         }
@@ -215,9 +219,7 @@ namespace Optimization.Methods.ZerothOrder
         /// <returns>Новую точку.</returns>
         private Point GetNegativeProbe(Point point, int i)
         {
-            // TODO: Разобраться почему обязательно нужно чтобы был новый массив даблов в возращаемой Point, иначе данные сбиваются!
-            Point ptPoint = new Point(point.ToDouble());
-            double[] solution = ptPoint.ToDouble();
+            double[] solution = new Point(point.ToDouble()).ToDouble();
             solution[i] -= this.step[i];
             return new Point(solution);
         }

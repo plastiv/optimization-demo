@@ -174,7 +174,7 @@ namespace Optimization.Methods.ZerothOrder
 
             for (int i = 0; i < this.Dimension; i++)
             {
-                if (this.Function(this.GetPositiveProbe(result, i).ToDouble()) < this.Function(result.ToDouble()))
+                if (this.GetFuncValue(this.GetPositiveProbe(result, i)) < this.GetFuncValue(result))
                 {
                     // шаг считается удачным
                     result = this.GetPositiveProbe(result, i);
@@ -182,7 +182,7 @@ namespace Optimization.Methods.ZerothOrder
                 else
                 {
                     // шаг неудачен, делаем шаг в противоположном направлении
-                    if (this.Function(this.GetNegativeProbe(result, i).ToDouble()) < this.Function(result.ToDouble()))
+                    if (this.GetFuncValue(this.GetNegativeProbe(result, i)) < this.GetFuncValue(result))
                     {
                         // шаг в противоположном направлении считается удачным
                         result = this.GetNegativeProbe(result, i);
@@ -196,6 +196,11 @@ namespace Optimization.Methods.ZerothOrder
             }
 
             return result.ToDouble();
+        }
+
+        private double GetFuncValue(Point point)
+        {
+            return this.Function(point.ToDouble());
         }
 
         /// <summary>

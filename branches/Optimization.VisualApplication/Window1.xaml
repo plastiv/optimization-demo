@@ -29,19 +29,25 @@
       <TextBox Name="txtX1">4</TextBox>
       <TextBox Name="txtX2" >4</TextBox>
       <Button Name="btnAddLine" Padding="3" Click="btnAddLine_Click">Add Line</Button>
-      <Button Name="btnForward" Padding="3" Click="btnForward_Click">Forward</Button>
-      <Button Name="btnReset" Padding="3" Click="btnReset_Click">Reset</Button>
-      <Button Name="btnBack" Padding="3" Click="btnBack_Click">Back</Button>
+      <Button Name="btnForward" Padding="3" Click="btnForward_Click">Step forward</Button>
+      <Button Name="btnReset" Padding="3" Click="btnReset_Click">Reset step</Button>
+      <Button Name="btnBack" Padding="3" Click="btnBack_Click">Step back</Button>
       <Button Name="btnRemoveLine"  Padding="3" Click="btnRemove_Click">Remove Line</Button>
     </WrapPanel>
-    
+
     <StackPanel DockPanel.Dock="Right">
       <CheckBox Name="chkTrackingGraph" Click="chkTrackingGraph_Click" Height="16" Width="120">Tracking Graph</CheckBox>
       <CheckBox Name="chkCursorCoordinateGraph" Click="chkCursorCoordinateGraph_Click" Height="16" Width="120">Cursor Coordinate Graph</CheckBox>
     </StackPanel>
-    
+
     <TextBox DockPanel.Dock="Top" Name="txtFunction" IsReadOnly="True"></TextBox>
-    
+
+    <StatusBar DockPanel.Dock="Bottom" Name="statusBar1">
+      <Label Name="lblStatus">Status</Label>
+      <Separator/>
+      <ProgressBar HorizontalAlignment="Right" Value="55"> </ProgressBar>
+    </StatusBar>
+
     <TabControl>
       <TabItem Header="tabItem1" Name="tabItem1">
         <d3:ChartPlotter Name="plotter">

@@ -6,19 +6,32 @@
     Icon="{x:Static d3:D3IconHelper.DynamicDataDisplayWhiteIcon}" WindowState="Maximized">
 
   <DockPanel Name="myGrid">
-    <Menu DockPanel.Dock="Top" Name="mainMenu" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="DarkGray">
-      <MenuItem Header="Настройки" Click="MenuItemIsoline_Click" ToolTip="Установки разрешения изолиний."/>
-      <MenuItem Header="О программе"/>
+    <Menu DockPanel.Dock="Top" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="DarkGray" IsMainMenu="True">
+      <MenuItem Header="_Function" >
+        <MenuItem Header="_New" Command="New"/>
+        <MenuItem Header="_Open" Command="Open"/>
+        <MenuItem Header="_Save" Command="Save"/>
+      </MenuItem>
+      <MenuItem Header="_Edit">
+        <MenuItem Header="_Save Picture" Click="InDevelope_Click"/>
+      </MenuItem>
+      <MenuItem Header="_Settings" >
+        <MenuItem Header="_Isoline" Click="InDevelope_Click"/>
+      </MenuItem>
+      <MenuItem Header="_Help" >
+        <MenuItem Header="_About" Click="InDevelope_Click"/>
+      </MenuItem>
     </Menu>
-    
+
     <WrapPanel DockPanel.Dock="Top">
-      <ComboBox Name="cmbFunctions" SelectionChanged="cmbFunctions_SelectionChanged" SelectedIndex="1"></ComboBox>
-      <ComboBox Name="cmbMethods" SelectedIndex="1"></ComboBox>
+      <ComboBox Name="cmbFunctions" SelectionChanged="cmbFunctions_SelectionChanged" SelectedIndex="1"/>
+      <ComboBox Name="cmbMethods" SelectedIndex="1"/>
       <TextBox Name="txtX1">4</TextBox>
       <TextBox Name="txtX2" >4</TextBox>
       <Button Name="btnAddLine" Padding="3" Click="btnAddLine_Click">Add Line</Button>
-      <Button Name="btnForward" Padding="3" Click="btnForward_Click">fwd</Button>
-      <Button Name="btnBack" Padding="3" Click="btnBack_Click">back</Button>
+      <Button Name="btnForward" Padding="3" Click="btnForward_Click">Forward</Button>
+      <Button Name="btnReset" Padding="3" Click="InDevelope_Click">Reset</Button>
+      <Button Name="btnBack" Padding="3" Click="btnBack_Click">Back</Button>
       <Button Name="btnRemoveLine"  Padding="3" Click="btnRemove_Click">Remove Line</Button>
     </WrapPanel>
     
@@ -35,7 +48,6 @@
           <d3:IsolineGraph Name="isolineGraph"/>
         </d3:ChartPlotter>
       </TabItem>
-      
       <TabItem Header="Report" Name="tabItemListView">
         <ListView Name="listView"/>
       </TabItem>

@@ -179,10 +179,14 @@ namespace Optimization.VisualApplication
             }
         }
 
-        private void MenuItemIsoline_Click(object sender, RoutedEventArgs e)
+        #region MenuClicks
+        private void InDevelope_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Menu item clicked");
+            MessageBox.Show("В разработке.");
         }
+        #endregion
+
+        
         #endregion
 
         #region Structs

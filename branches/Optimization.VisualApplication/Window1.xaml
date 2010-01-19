@@ -20,7 +20,7 @@
         <MenuItem Name="menuItemCursorCoordinateGraph" IsCheckable="true" Header="_Cursor Coordinate Graph" Click="menuItemCursorCoordinateGraph_Click"/>
       </MenuItem>
       <MenuItem Header="_Settings" >
-        <MenuItem Header="_Isoline" Click="InDevelope_Click"/>
+        <MenuItem Header="_Isoline" Click="menuItemIsolineSettings_Click"/>
       </MenuItem>
       <MenuItem Header="_Help" >
         <MenuItem Header="_About" Click="InDevelope_Click"/>

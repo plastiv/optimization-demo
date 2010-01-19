@@ -28,9 +28,9 @@ namespace Optimization.VisualApplication
         #endregion
 
         #region Private Fields
-        private readonly int minValue = Optimization.VisualApplication.Properties.Settings.Default.MinValue;
-        private readonly int maxValue = Optimization.VisualApplication.Properties.Settings.Default.MaxValue;
-        private readonly int pointCount = Optimization.VisualApplication.Properties.Settings.Default.PointCount;
+        private int minValue = Optimization.VisualApplication.Properties.Settings.Default.MinValue;
+        private int maxValue = Optimization.VisualApplication.Properties.Settings.Default.MaxValue;
+        private int pointCount = Optimization.VisualApplication.Properties.Settings.Default.PointCount;
 
         private WarpedDataSource2D<double> warpedDataSource2D;
 
@@ -105,7 +105,6 @@ namespace Optimization.VisualApplication
             gvc4.Width = 150;
             myGridView.Columns.Add(gvc4);
 
-            //ItemsSource is ObservableCollection of EmployeeInfo objects
             listViewReport.View = myGridView;
         }
 
@@ -115,6 +114,7 @@ namespace Optimization.VisualApplication
             {
                 plotter.Children.Remove(methodLines.Dequeue().ViewpontPolyline);
             }
+
             lblStepCount.Content = "Step count: 0";
             lblStepIndex.Content = "Step index: 0";
 
@@ -123,7 +123,12 @@ namespace Optimization.VisualApplication
             txtX1.Text = selectedTask.startPoint[0].ToString();
             txtX2.Text = selectedTask.startPoint[1].ToString();
 
-            warpedDataSource2D = IsolineSource.GetWarpedDataSource2D(selectedTask.function, minValue, maxValue, pointCount);
+            DrawIsolineGraph();
+        }
+
+        private void DrawIsolineGraph()
+        {
+            warpedDataSource2D = IsolineSource.GetWarpedDataSource2D(((ManyVariableFunctionTask)cmbFunctions.SelectedItem).function, minValue, maxValue, pointCount);
             isolineGraph.DataSource = warpedDataSource2D;
             plotter.Viewport.Visible = warpedDataSource2D.GetGridBounds();
         }
@@ -225,6 +230,22 @@ namespace Optimization.VisualApplication
         {
             MessageBox.Show("В разработке.");
         }
+
+        private void menuItemIsolineSettings_Click(object sender, RoutedEventArgs e)
+        {
+            IsolineSettingsWindow isolineSettings = new IsolineSettingsWindow();
+            isolineSettings.Owner = this;
+            isolineSettings.IsolineSetting = new IsolineSetting(this.minValue, this.maxValue, this.pointCount);
+            isolineSettings.ShowDialog();
+
+            if (isolineSettings.DialogResult == true)
+            {
+                this.minValue = isolineSettings.IsolineSetting.Minimum;
+                this.maxValue = isolineSettings.IsolineSetting.Maximum;
+                this.pointCount = isolineSettings.IsolineSetting.Count;
+                DrawIsolineGraph();
+            }
+        }
         #endregion
 
         #endregion
@@ -232,5 +253,37 @@ namespace Optimization.VisualApplication
         #region Structs
 
         #endregion
+    }
+
+    internal struct IsolineSetting
+    {
+        private int minimum;
+        private int maximum;
+        private int count;
+
+        public IsolineSetting(int minimum, int maximum, int count)
+        {
+            this.count = count;
+            this.minimum = minimum;
+            this.maximum = maximum;
+        }
+
+        public int Minimum
+        {
+            get { return minimum; }
+            set { minimum = value; }
+        }
+
+        public int Maximum
+        {
+            get { return maximum; }
+            set { maximum = value; }
+        }
+
+        public int Count
+        {
+            get { return count; }
+            set { count = value; }
+        }
     }
 }

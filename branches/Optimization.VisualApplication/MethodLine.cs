@@ -77,7 +77,7 @@ namespace Optimization.VisualApplication
 
         internal void Reset()
         {
-            while (currMaxPointIndex != 1)
+            while (currMaxPointIndex > 1)
             {
                 viewpontPolyline.Points.RemoveAt(currMaxPointIndex - 1);
                 currMaxPointIndex--;

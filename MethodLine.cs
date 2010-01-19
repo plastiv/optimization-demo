@@ -35,7 +35,7 @@ namespace Optimization.VisualApplication
         #region Properties
         internal int CurrMaxPointIndex
         {
-            get { return currMaxPointIndex; }
+            get { return currMaxPointIndex - 1; }
         }
 
         internal ViewportPolyline ViewpontPolyline

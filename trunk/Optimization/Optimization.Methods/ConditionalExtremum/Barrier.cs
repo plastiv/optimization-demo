@@ -3,6 +3,7 @@ namespace Optimization.Methods.ConditionalExtremum
 {
     using Optimization.Methods.ZerothOrder;
     using System.Diagnostics;
+    using System;
 
     class Barrier
     {
@@ -47,14 +48,7 @@ namespace Optimization.Methods.ConditionalExtremum
                 return param.Func(inputx) + PenaltyFunction(inputx, param.Penalty);
             };
 
-            Hooke_Jevees.MethodParams hjparam = new Hooke_Jevees.MethodParams();
-            hjparam.AccelerateCoefficient = 1.5;
-            hjparam.CoefficientReduction = 4;
-            hjparam.Dimension = 2;
-            hjparam.Step = new double[hjparam.Dimension];
-            hjparam.Step[0] = 0.75;
-            hjparam.Step[1] = 0.75;
-            Hooke_Jevees hjmethod = new Hooke_Jevees(AuxiliaryFunction, hjparam);
+            Hooke_Jevees hjmethod = new Hooke_Jevees(AuxiliaryFunction, 2);
 
             bool notFound = true;
 

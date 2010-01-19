@@ -15,6 +15,10 @@
       <MenuItem Header="_Edit">
         <MenuItem Header="_Save Picture" Click="InDevelope_Click"/>
       </MenuItem>
+      <MenuItem Header="_View">
+        <MenuItem Name="menuItemTrackingGraph" IsCheckable="true" Header="_Tracking Graph" Click="menuItemTrackingGraph_Click"/>
+        <MenuItem Name="menuItemCursorCoordinateGraph" IsCheckable="true" Header="_Cursor Coordinate Graph" Click="menuItemCursorCoordinateGraph_Click"/>
+      </MenuItem>
       <MenuItem Header="_Settings" >
         <MenuItem Header="_Isoline" Click="InDevelope_Click"/>
       </MenuItem>
@@ -34,11 +38,6 @@
       <Button Name="btnBack" Padding="3" Click="btnBack_Click">Step back</Button>
       <Button Name="btnRemoveLine"  Padding="3" Click="btnRemove_Click">Remove Line</Button>
     </WrapPanel>
-
-    <StackPanel DockPanel.Dock="Right">
-      <CheckBox Name="chkTrackingGraph" Click="chkTrackingGraph_Click" Height="16" Width="120">Tracking Graph</CheckBox>
-      <CheckBox Name="chkCursorCoordinateGraph" Click="chkCursorCoordinateGraph_Click" Height="16" Width="120">Cursor Coordinate Graph</CheckBox>
-    </StackPanel>
 
     <TextBox DockPanel.Dock="Top" Name="txtFunction" IsReadOnly="True"></TextBox>
 

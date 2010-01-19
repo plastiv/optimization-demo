@@ -106,7 +106,7 @@ namespace Optimization.VisualApplication
             myGridView.Columns.Add(gvc4);
 
             //ItemsSource is ObservableCollection of EmployeeInfo objects
-            listView.View = myGridView;
+            listViewReport.View = myGridView;
         }
 
         private void cmbFunctions_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -115,6 +115,8 @@ namespace Optimization.VisualApplication
             {
                 plotter.Children.Remove(methodLines.Dequeue().ViewpontPolyline);
             }
+            lblStepCount.Content = "Step count: 0";
+            lblStepIndex.Content = "Step index: 0";
 
             ManyVariableFunctionTask selectedTask = (ManyVariableFunctionTask)cmbFunctions.SelectedItem;
             txtFunction.Text = selectedTask.expression;
@@ -133,7 +135,9 @@ namespace Optimization.VisualApplication
             methodLines.Enqueue(tempMethodLine);
             plotter.AddChild(tempMethodLine.ViewpontPolyline);
 
-            listView.ItemsSource = tempMethodLine.GetReports();
+            listViewReport.ItemsSource = tempMethodLine.GetReports();
+            lblStepCount.Content = "Step count: " + methodLines.Peek().CurrMaxPointIndex;
+            lblStepIndex.Content = "Step index: " + methodLines.Peek().CurrMaxPointIndex;
         }
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)
@@ -141,22 +145,52 @@ namespace Optimization.VisualApplication
             if (methodLines.Count != 0)
             {
                 plotter.Children.Remove(methodLines.Dequeue().ViewpontPolyline);
+                lblStepCount.Content = "Step count: 0";
+                lblStepIndex.Content = "Step index: 0";
+            }
+            else
+            {
+                MessageBox.Show("Добавьте линию сначала.");
             }
         }
 
         private void btnForward_Click(object sender, RoutedEventArgs e)
         {
-            methodLines.Peek().AddPoint();
+            if (methodLines.Count != 0)
+            {
+                methodLines.Peek().AddPoint();
+                lblStepIndex.Content = "Step index: " + methodLines.Peek().CurrMaxPointIndex;
+            }
+            else
+            {
+                MessageBox.Show("Добавьте линию сначала.");
+            }
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
-            methodLines.Peek().RemovePoint();
+            if (methodLines.Count != 0)
+            {
+                methodLines.Peek().RemovePoint();
+                lblStepIndex.Content = "Step index: " + methodLines.Peek().CurrMaxPointIndex;
+            }
+            else
+            {
+                MessageBox.Show("Добавьте линию сначала.");
+            }
         }
 
         private void btnReset_Click(object sender, RoutedEventArgs e)
         {
-            methodLines.Peek().Reset();
+            if (methodLines.Count != 0)
+            {
+                methodLines.Peek().Reset();
+                lblStepIndex.Content = "Step index: " + methodLines.Peek().CurrMaxPointIndex;
+            }
+            else
+            {
+                MessageBox.Show("Добавьте линию сначала.");
+            }
         }
         #endregion
 

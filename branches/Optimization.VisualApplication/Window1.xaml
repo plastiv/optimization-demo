@@ -41,14 +41,12 @@
 
     <TextBox DockPanel.Dock="Top" Name="txtFunction" IsReadOnly="True"></TextBox>
 
-    <StatusBar DockPanel.Dock="Bottom" Name="statusBar1">
-      <Label Name="lblStatus">Status</Label>
-      <Separator/>
-      <ProgressBar HorizontalAlignment="Right" Value="55"> </ProgressBar>
+    <StatusBar DockPanel.Dock="Bottom" Name="statusBar1" Background="White">
+      <Label Name="lblStatus">Status label</Label>
     </StatusBar>
-
+    
     <TabControl>
-      <TabItem Header="tabItem1" Name="tabItem1">
+      <TabItem Header="Isoline Graph" Name="tabItemIsolineGraph">
         <d3:ChartPlotter Name="plotter">
           <d3:IsolineGraph Name="isolineGraph"/>
         </d3:ChartPlotter>
@@ -57,6 +55,5 @@
         <ListView Name="listView"/>
       </TabItem>
     </TabControl>
-
   </DockPanel>
 </Window>

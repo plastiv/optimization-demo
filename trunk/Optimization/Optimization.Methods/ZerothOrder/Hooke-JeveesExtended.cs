@@ -61,20 +61,20 @@ namespace Optimization.Methods.ZerothOrder
             Debug.Assert(precision > 0, "Precision is unexepectedly less or equal zero");
 
             List<Point> listPoinns = new List<Point>();
+            listPoinns.Add(new Point(startPoint));
 
             Point newBasis = new Point(startPoint);
             Point oldBasis = new Point(startPoint);
 
             while (true)
             {
-                listPoinns.Add(new Point(oldBasis.ToDouble()));
-
                 // Шаг 2. Осуществить исследующий поиск по выбранному координатному направлению (i)
                 newBasis = this.ExploratarySearch(newBasis);
 
                 // Проверить успешность исследующего поиска:
                 if (this.GetFuncValue(newBasis) < this.GetFuncValue(oldBasis))
                 {
+                    listPoinns.Add(new Point(newBasis.ToDouble()));
                     // перейти к шагу 4;
 
                     // Сформируем х[k]

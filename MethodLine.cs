@@ -11,61 +11,86 @@ namespace Optimization.VisualApplication
 {
     internal class MethodLine
     {
+        #region Public Fields
+
+        #endregion
+
+        #region Private Fields
         LineSource lineSource;
         ViewportPolyline viewpontPolyline;
-        int CurrMaxPointIndex;
+        int currMaxPointIndex;
+        #endregion
 
-        public ViewportPolyline ViewpontPolyline
-        {
-            get { return viewpontPolyline; }
-        }
-
+        #region Constructors
         public MethodLine(ManyVariableFunctionTask selectedTask, object methodIndex, double[] startingPoint)
         {
             lineSource = new LineSource(selectedTask.function);
             viewpontPolyline = new ViewportPolyline();
             viewpontPolyline.Points = lineSource.GetPointCollection(methodIndex, startingPoint);
             viewpontPolyline.Stroke = ColorHelper.RandomBrush;
-            CurrMaxPointIndex = lineSource.PointsCount;
+            currMaxPointIndex = lineSource.PointsCount;
+        }
+        #endregion
+
+        #region Properties
+        internal int CurrMaxPointIndex
+        {
+            get { return currMaxPointIndex; }
         }
 
+        internal ViewportPolyline ViewpontPolyline
+        {
+            get { return viewpontPolyline; }
+        }
+        #endregion
+
+        #region Public Methods
         internal ObservableCollection<Report> GetReports()
         {
             ObservableCollection<Report> result = new ObservableCollection<Report>();
 
             for (int i = 0; i < lineSource.PointsCount; i++)
             {
-                result.Add(new Report { Iteration = i, PointX = lineSource.Solutions[i][0], PointY = lineSource.Solutions[i][1], FuncValue = lineSource.Function(lineSource.Solutions[i])});
+                result.Add(new Report { Iteration = i, PointX = lineSource.Solutions[i][0], PointY = lineSource.Solutions[i][1], FuncValue = lineSource.Function(lineSource.Solutions[i]) });
             }
 
             return result;
         }
 
-        public void AddPoint()
+        internal void AddPoint()
         {
-            if (CurrMaxPointIndex < lineSource.PointsCount)
+            if (currMaxPointIndex < lineSource.PointsCount)
             {
-                viewpontPolyline.Points.Add(lineSource.GetPointAt(CurrMaxPointIndex));
-                CurrMaxPointIndex++;
+                viewpontPolyline.Points.Add(lineSource.GetPointAt(currMaxPointIndex));
+                currMaxPointIndex++;
             }
         }
 
-        public void RemovePoint()
+        internal void RemovePoint()
         {
-            if (CurrMaxPointIndex > 0)
+            if (currMaxPointIndex > 0)
             {
-                viewpontPolyline.Points.RemoveAt(CurrMaxPointIndex - 1);
-                CurrMaxPointIndex--;
+                viewpontPolyline.Points.RemoveAt(currMaxPointIndex - 1);
+                currMaxPointIndex--;
             }
         }
 
-        public void Reset()
+        internal void Reset()
         {
-            while (CurrMaxPointIndex != 1)
+            while (currMaxPointIndex != 1)
             {
-                viewpontPolyline.Points.RemoveAt(CurrMaxPointIndex - 1);
-                CurrMaxPointIndex--;
+                viewpontPolyline.Points.RemoveAt(currMaxPointIndex - 1);
+                currMaxPointIndex--;
             }
         }
+        #endregion
+
+        #region Private Methods
+
+        #endregion
+
+        #region Structs
+
+        #endregion
     }
 }

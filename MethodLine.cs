@@ -58,5 +58,14 @@ namespace Optimization.VisualApplication
                 CurrMaxPointIndex--;
             }
         }
+
+        public void Reset()
+        {
+            while (CurrMaxPointIndex != 1)
+            {
+                viewpontPolyline.Points.RemoveAt(CurrMaxPointIndex - 1);
+                CurrMaxPointIndex--;
+            }
+        }
     }
 }

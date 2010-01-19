@@ -126,6 +126,33 @@ namespace Optimization.VisualApplication
             plotter.Viewport.Visible = warpedDataSource2D.GetGridBounds();
         }
 
+        private void chkTrackingGraph_Click(object sender, RoutedEventArgs e)
+        {
+            if (chkTrackingGraph.IsChecked == true)
+            {
+                trackingGraph = new IsolineTrackingGraph(); // TODO: Lazy initialization.
+                trackingGraph.DataSource = warpedDataSource2D;
+                plotter.AddChild(trackingGraph);
+            }
+            else
+            {
+                plotter.Children.Remove(trackingGraph);
+            }
+        }
+
+        private void chkCursorCoordinateGraph_Click(object sender, RoutedEventArgs e)
+        {
+            if (chkCursorCoordinateGraph.IsChecked == true)
+            {
+                plotter.AddChild(cursorCoordinateGraph);
+            }
+            else
+            {
+                plotter.Children.Remove(cursorCoordinateGraph);
+            }
+        }
+
+        #region Button Clicks
         private void btnAddLine_Click(object sender, RoutedEventArgs e)
         {
             MethodLine tempMethodLine = new MethodLine((ManyVariableFunctionTask)cmbFunctions.SelectedItem, cmbMethods.SelectedItem, new double[2] { double.Parse(txtX1.Text), double.Parse(txtX2.Text) });
@@ -153,40 +180,19 @@ namespace Optimization.VisualApplication
             methodLines.Peek().RemovePoint();
         }
 
-        private void chkTrackingGraph_Click(object sender, RoutedEventArgs e)
+        private void btnReset_Click(object sender, RoutedEventArgs e)
         {
-            if (chkTrackingGraph.IsChecked == true)
-            {
-                trackingGraph = new IsolineTrackingGraph(); // TODO: Lazy initialization.
-                trackingGraph.DataSource = warpedDataSource2D;
-                plotter.AddChild(trackingGraph);
-            }
-            else
-            {
-                plotter.Children.Remove(trackingGraph);
-            }
+            methodLines.Peek().Reset();
         }
+        #endregion
 
-        private void chkCursorCoordinateGraph_Click(object sender, RoutedEventArgs e)
-        {
-            if (chkCursorCoordinateGraph.IsChecked == true)
-            {
-                plotter.AddChild(cursorCoordinateGraph);
-            }
-            else
-            {
-                plotter.Children.Remove(cursorCoordinateGraph);
-            }
-        }
-
-        #region MenuClicks
+        #region Menu Clicks
         private void InDevelope_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("В разработке.");
         }
         #endregion
 
-        
         #endregion
 
         #region Structs
